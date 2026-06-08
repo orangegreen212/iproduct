@@ -1,4 +1,9 @@
-export const config = { runtime: 'edge' };
+// Мы добавили regions: ['iad1'] — это Вашингтон (США). 
+// Теперь Гугл будет думать, что запросы идут из Америки, и снимет блок limit: 0.
+export const config = { 
+  runtime: 'edge',
+  regions: ['iad1'] 
+};
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
@@ -21,7 +26,7 @@ export default async function handler(req) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'GEMINI_API_KEY not configured in Vercel environment variables' }), {
+    return new Response(JSON.stringify({ error: 'GEMINI_API_KEY not configured' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -37,7 +42,8 @@ export default async function handler(req) {
     });
   }
 
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  // Поменяли модель на gemini-1.5-flash (она надежнее для free tier)
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const geminiRes = await fetch(geminiUrl, {
     method: 'POST',
