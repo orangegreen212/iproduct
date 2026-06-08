@@ -8,24 +8,23 @@
     <!-- Ваш HTML остается здесь -->
 
 <script>
-// 1. МАССИВ (Вставьте сюда 30 вопросов)
+// 1. Блок данных
 const QUESTIONS = [
   { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate.', framework:'SQL', steps:['Grain','Event','Logic'], hint:'Define grain.' }
-  // ... (вставьте сюда ваши остальные вопросы)
 ];
 
-// 2. ФУНКЦИИ-ЗАГЛУШКИ (Именно их не хватает для инициализации)
-function updateCounts() { 
-    console.log("updateCounts: Заглушка"); 
+// 2. Блок функций (ОБЯЗАТЕЛЬНО ПЕРЕД ИНИЦИАЛИЗАЦИЕЙ)
+function updateCounts() {
+    console.log("Counts updated");
 }
 
-function updateStats() { 
-    console.log("updateStats: Заглушка"); 
+function updateStats() {
+    console.log("Stats updated");
 }
 
-function showStart() { 
-    const start = document.getElementById('start-screen');
-    if (start) start.style.display = 'flex';
+function showStart() {
+    const screen = document.getElementById('start-screen');
+    if (screen) screen.style.display = 'flex';
 }
 
 function init() {
@@ -34,7 +33,7 @@ function init() {
     showStart();
 }
 
-// 3. ЗАПУСК
+// 3. ЗАПУСК ИНИЦИАЛИЗАЦИИ
 init();
 </script>
 </body>
