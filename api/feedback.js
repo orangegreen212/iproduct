@@ -12,7 +12,7 @@ export default async function handler(req) {
     });
   }
 
-  const apiKey = process.env.GROQ_API_KEY; // Вставьте ключ Groq сюда
+  const apiKey = process.env.GROQ_API_KEY;
   const body = await req.json();
   const prompt = body.contents[0].parts[0].text;
 
@@ -24,15 +24,29 @@ export default async function handler(req) {
     },
     body: JSON.stringify({
       model: "llama-3.3-70b-versatile",
-      messages: [{ role: "user", content: prompt }]
+      messages: [
+        { 
+          role: "system", 
+          content: `You are an expert interviewer. Evaluate the candidate's answer. 
+          Return ONLY a JSON object with this structure:
+          {
+            "structure": score 1-10,
+            "business": score 1-10,
+            "terminology": score 1-10,
+            "closesLoop": "Yes" or "No",
+            "good": "1 sentence what was good",
+            "missing": "1 sentence what was missing",
+            "completedSteps": ["Step1", "Step2"]
+          }`
+        },
+        { role: "user", content: prompt }
+      ],
+      response_format: { type: "json_object" }
     })
   });
 
   const data = await response.json();
-
-  return new Response(JSON.stringify({
-    candidates: [{ content: { parts: [{ text: data.choices[0].message.content }] } }]
-  }), {
+  return new Response(data.choices[0].message.content, {
     status: 200,
     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
   });
