@@ -19,23 +19,18 @@
   .nav-item { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text2); transition: 0.15s; margin-bottom: 2px; }
   .nav-item:hover { background: var(--bg3); color: var(--text); }
   .nav-item.active { background: var(--accent-soft); color: var(--accent); }
-  
   .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
   .start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-  
   .topbar { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); gap: 10px; }
   .session { flex: 1; overflow-y: auto; padding-bottom: 20px; }
-  
   .feedback-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
   .score-card { background: var(--bg3); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
   .score-label { font-size: 10px; color: var(--text3); text-transform: uppercase; }
   .score-val { font-size: 16px; font-weight: 700; color: var(--text); }
-  
   .q-card { margin: 16px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
   .fw-steps { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
   .fw-step { font-size: 11px; padding: 4px 12px; border-radius: 20px; background: var(--bg3); border: 1px solid var(--border); color: var(--text3); }
   .fw-step.done { background: var(--green-soft); color: var(--green); border-color: var(--green); }
-
   .transcript { margin: 0 20px; padding: 15px; background: var(--bg2); border-radius: 10px; min-height: 80px; color: var(--text2); border: 1px dashed var(--border); }
   .controls { padding: 15px 20px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; }
   .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; }
@@ -43,13 +38,15 @@
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(248, 113, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } }
   textarea { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: #fff; resize: none; }
   .submit-btn { background: var(--accent); color: #fff; border: none; padding: 0 20px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+  .lang-btn { background: var(--bg3); border: 1px solid var(--border); color: #fff; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+  .lang-btn.active { background: var(--accent); border-color: var(--accent); }
 </style>
 </head>
 <body>
 
 <div class="layout">
   <div class="sidebar">
-    <h2 style="font-size:14px; padding-left:10px;">Interview Trainer</h2>
+    <h2 style="font-size:14px; padding-left:10px; margin-bottom:20px;">Interview Trainer</h2>
     <div class="nav-label">Practice</div>
     <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All Questions</div>
     <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL / Python</div>
@@ -66,7 +63,9 @@
     <div class="topbar">
       <div id="session-title" style="font-weight:600;">Session</div>
       <div style="flex:1"></div>
-      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer;">✕ End</button>
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-uk" onclick="setLang('uk')">УК</button>
+      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer; margin-left:10px;">✕ End</button>
     </div>
 
     <div class="session">
@@ -86,19 +85,107 @@
           <p id="fb-missing" style="margin-top:10px;"></p>
         </div>
       </div>
-
-      <div class="transcript" id="transcript">Your transcript...</div>
+      <div class="transcript" id="transcript">Your transcript will appear here...</div>
     </div>
 
     <div class="controls">
       <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</div>
-      <textarea id="answer-input" placeholder="Type or speak..."></textarea>
+      <textarea id="answer-input" placeholder="Type or speak..." rows="1"></textarea>
       <button id="submit-btn" class="submit-btn" onclick="submitAnswer()">Evaluate →</button>
     </div>
   </div>
 </div>
 
 <script>
+// --- ВСЕ ФУНКЦИИ ОБЪЯВЛЕНЫ ПЕРВЫМИ (ЗАЩИТА ОТ ОШИБОК) ---
+window.state = { lang: 'en', category: 'all', currentQ: null, isRecording: false, recognition: null };
+
+window.setLang = function(l) {
+  state.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + l).classList.add('active');
+  if(state.currentQ) renderQuestion();
+};
+
+window.setCategory = function(cat) {
+  state.category = cat;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const activeNav = document.getElementById('nav-' + cat);
+  if(activeNav) activeNav.classList.add('active');
+  if(document.getElementById('start-screen').style.display === 'none') loadQuestion();
+};
+
+window.startSession = function() {
+  document.getElementById('start-screen').style.display = 'none';
+  loadQuestion();
+};
+
+window.toggleMic = function() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return alert("Use Chrome/Edge");
+
+  if (state.isRecording) {
+    state.recognition.stop();
+  } else {
+    state.recognition = new SpeechRecognition();
+    state.recognition.continuous = true;
+    state.recognition.interimResults = true;
+    state.recognition.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
+    state.recognition.onstart = () => { state.isRecording = true; document.getElementById('mic-btn').classList.add('recording'); };
+    state.recognition.onresult = (e) => { 
+        let t = ""; for(let i=0; i<e.results.length; i++) t += e.results[i][0].transcript;
+        document.getElementById('answer-input').value = t; 
+        document.getElementById('transcript').textContent = t;
+    };
+    state.recognition.onend = () => { state.isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); };
+    state.recognition.start();
+  }
+};
+
+window.loadQuestion = function() {
+  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
+  if (pool.length === 0) return;
+  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
+  renderQuestion();
+};
+
+function renderQuestion() {
+  const q = state.currentQ;
+  document.getElementById('q-text').textContent = q[state.lang];
+  document.getElementById('session-title').textContent = q.type.toUpperCase();
+  const stepsBox = document.getElementById('fw-steps');
+  stepsBox.innerHTML = '';
+  q.steps.forEach(s => { stepsBox.innerHTML += `<span class="fw-step" id="step-${s}">${s}</span>`; });
+  document.getElementById('feedback-grid').style.display = 'none';
+  document.getElementById('feedback-text').style.display = 'none';
+  document.getElementById('answer-input').value = "";
+  document.getElementById('transcript').textContent = state.lang === 'en' ? "Listening..." : "Слухаю...";
+}
+
+window.submitAnswer = async function() {
+  const btn = document.getElementById('submit-btn');
+  const answer = document.getElementById('answer-input').value;
+  if(!answer) return alert("Say something!");
+  btn.disabled = true; btn.textContent = "...";
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify({ contents: [{ parts: [{ text: `Evaluate ${state.currentQ.type} in ${state.lang}. Q: ${state.currentQ[state.lang]} Ans: ${answer}` }] }] })
+    });
+    const fb = await res.json();
+    document.getElementById('s-struct').textContent = fb.structure + '/10';
+    document.getElementById('s-biz').textContent = fb.business + '/10';
+    document.getElementById('s-term').textContent = fb.terminology + '/10';
+    document.getElementById('s-loop').textContent = fb.closesLoop;
+    document.getElementById('fb-good').innerHTML = `<b>Good:</b> ${fb.good}`;
+    document.getElementById('fb-missing').innerHTML = `<b>Missing:</b> ${fb.missing}`;
+    if(fb.completedSteps) fb.completedSteps.forEach(s => { const el = document.getElementById('step-' + s); if(el) el.classList.add('done'); });
+    document.getElementById('feedback-grid').style.display = 'grid';
+    document.getElementById('feedback-text').style.display = 'block';
+  } catch (e) { alert("API Error"); } finally { btn.disabled = false; btn.textContent = "Evaluate →"; }
+};
+
+// --- ДАННЫЕ (МАССИВ ВОПРОСОВ) ---
 const QUESTIONS = [
   // SQL / PYTHON
   { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
@@ -138,103 +225,6 @@ const QUESTIONS = [
   { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
 ];
 
-
-let state = { category: 'all', currentQ: null, isRecording: false, recognition: null };
-
-window.setCategory = function(cat) {
-  state.category = cat;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + cat).classList.add('active');
-  if(document.getElementById('start-screen').style.display === 'none') {
-    loadQuestion();
-  }
-};
-
-window.startSession = function() {
-  document.getElementById('start-screen').style.display = 'none';
-  loadQuestion();
-};
-
-function loadQuestion() {
-  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
-  if (pool.length === 0) return;
-  
-  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
-  document.getElementById('q-text').textContent = state.currentQ.en;
-  document.getElementById('session-title').textContent = state.currentQ.type.toUpperCase();
-  
-  const stepsBox = document.getElementById('fw-steps');
-  stepsBox.innerHTML = '';
-  state.currentQ.steps.forEach(s => {
-    stepsBox.innerHTML += `<span class="fw-step" id="step-${s}">${s}</span>`;
-  });
-  
-  document.getElementById('feedback-grid').style.display = 'none';
-  document.getElementById('feedback-text').style.display = 'none';
-  document.getElementById('answer-input').value = "";
-  document.getElementById('transcript').textContent = "Listening...";
-}
-
-window.toggleMic = function() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return alert("Use Chrome/Edge");
-
-  if (state.isRecording) {
-    state.recognition.stop();
-  } else {
-    state.recognition = new SpeechRecognition();
-    state.recognition.continuous = true;
-    state.recognition.interimResults = true;
-    state.recognition.onstart = () => { state.isRecording = true; document.getElementById('mic-btn').classList.add('recording'); };
-    state.recognition.onresult = (e) => { 
-        let t = ""; for(let i=0; i<e.results.length; i++) t += e.results[i][0].transcript;
-        document.getElementById('answer-input').value = t; 
-        document.getElementById('transcript').textContent = t;
-    };
-    state.recognition.onend = () => { state.isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); };
-    state.recognition.start();
-  }
-};
-
-window.submitAnswer = async function() {
-  const btn = document.getElementById('submit-btn');
-  const answer = document.getElementById('answer-input').value;
-  if(!answer) return alert("Please say or type something");
-  
-  btn.disabled = true;
-  btn.textContent = "Analyzing...";
-
-  try {
-    const res = await fetch('/api/feedback', {
-      method: 'POST',
-      body: JSON.stringify({ contents: [{ parts: [{ text: `Evaluate this ${state.currentQ.type} answer: "${answer}" for question: "${state.currentQ.en}"` }] }] })
-    });
-    const fb = await res.json();
-    
-    document.getElementById('s-struct').textContent = fb.structure + '/10';
-    document.getElementById('s-biz').textContent = fb.business + '/10';
-    document.getElementById('s-term').textContent = fb.terminology + '/10';
-    document.getElementById('s-loop').textContent = fb.closesLoop;
-    
-    document.getElementById('fb-good').innerHTML = `<b>✓ Good:</b> ${fb.good}`;
-    document.getElementById('fb-missing').innerHTML = `<b>△ Missing:</b> ${fb.missing}`;
-    
-    if(fb.completedSteps) {
-      fb.completedSteps.forEach(s => {
-        const el = document.getElementById('step-' + s);
-        if(el) el.classList.add('done');
-      });
-    }
-
-    document.getElementById('feedback-grid').style.display = 'grid';
-    document.getElementById('feedback-text').style.display = 'block';
-  } catch (e) {
-    alert("Error connecting to AI");
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Evaluate →";
-  }
-};
 </script>
 </body>
 </html>
