@@ -16,29 +16,24 @@ export default async function handler(req) {
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
-  let body;
-  try {
-    body = await req.json();
-  } catch (e) {
-    return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
-  }
+  const body = await req.json();
 
-  // Используем v1 и более короткий путь
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // Используем модель gemini-1.5-flash-8b, она стабильнее для бесплатных аккаунтов
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${apiKey}`;
 
-  const geminiRes = await fetch(geminiUrl, {
+  const response = await fetch(geminiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
 
-  const data = await geminiRes.json();
+  const data = await response.json();
 
   return new Response(JSON.stringify(data), {
-    status: geminiRes.status,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
+    status: response.status,
+    headers: { 
+        'Content-Type': 'application/json', 
+        'Access-Control-Allow-Origin': '*' 
+    }
   });
 }
