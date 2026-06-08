@@ -6,831 +6,126 @@
 <title>Interview Trainer — Revenue · Product · Data</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0f0f10;
-    --bg2: #18181b;
-    --bg3: #222226;
-    --border: rgba(255,255,255,0.08);
-    --border2: rgba(255,255,255,0.14);
-    --text: #f0efe8;
-    --text2: #9b9a95;
-    --text3: #5a5a56;
-    --accent: #7c6af7;
-    --accent-soft: rgba(124,106,247,0.15);
-    --green: #4ade80;
-    --green-soft: rgba(74,222,128,0.12);
-    --amber: #f59e0b;
-    --amber-soft: rgba(245,158,11,0.12);
-    --red: #f87171;
-    --red-soft: rgba(248,113,113,0.12);
-    --blue: #60a5fa;
-    --blue-soft: rgba(96,165,250,0.12);
-    --teal: #2dd4bf;
-    --teal-soft: rgba(45,212,191,0.12);
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
-
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
-
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-
-  /* Layout */
+  :root { --bg: #0f0f10; --bg2: #18181b; --bg3: #222226; --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14); --text: #f0efe8; --text2: #9b9a95; --text3: #5a5a56; --accent: #7c6af7; --accent-soft: rgba(124,106,247,0.15); --red: #f87171; --red-soft: rgba(248,113,113,0.12); --radius: 10px; --radius-sm: 6px; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; height: 100vh; overflow: hidden; }
   .layout { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
-
-  /* Sidebar */
-  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
-  .sidebar-logo { padding: 20px 18px 16px; border-bottom: 1px solid var(--border); }
-  .logo-mark { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
-  .logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-
-  .nav-section { padding: 12px 10px 0; }
-  .nav-label { font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 8px; margin-bottom: 4px; }
-  .nav-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; color: var(--text2); transition: all 0.15s; user-select: none; }
-  .nav-item:hover { background: var(--bg3); color: var(--text); }
-  .nav-item.active { background: var(--accent-soft); color: var(--accent); }
-  .nav-item .icon { font-size: 15px; flex-shrink: 0; }
-  .nav-count { margin-left: auto; font-size: 10px; background: var(--bg3); color: var(--text3); padding: 1px 6px; border-radius: 20px; }
-
-  .sidebar-stats { margin: auto 0 0; padding: 14px 14px 18px; border-top: 1px solid var(--border); }
-  .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
-  .stat-item { text-align: center; }
-  .stat-val { font-size: 18px; font-weight: 600; color: var(--text); }
-  .stat-label { font-size: 10px; color: var(--text3); }
-  .progress-bar { height: 3px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; }
-  .progress-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--text3); margin-top: 4px; }
-
-  /* Main */
+  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
+  .nav-item { padding: 10px; cursor: pointer; border-radius: var(--radius-sm); color: var(--text2); display: flex; align-items: center; gap: 10px; }
+  .nav-item:hover, .nav-item.active { background: var(--bg3); color: var(--text); }
   .main { display: flex; flex-direction: column; overflow: hidden; }
-
-  .topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
-  .topbar-title { font-size: 13px; font-weight: 500; color: var(--text); }
-  .spacer { flex: 1; }
-
-  .lang-toggle { display: flex; background: var(--bg3); border-radius: var(--radius-sm); padding: 3px; gap: 2px; }
-  .lang-btn { font-size: 11px; padding: 3px 10px; border-radius: 4px; cursor: pointer; border: none; background: none; color: var(--text2); transition: all 0.15s; font-weight: 500; }
-  .lang-btn.active { background: var(--bg2); color: var(--text); border: 1px solid var(--border2); }
-
-  .level-select { font-size: 12px; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 5px 10px; border-radius: var(--radius-sm); cursor: pointer; }
-  .level-select option { background: var(--bg2); }
-
-  .btn-sm { font-size: 12px; padding: 5px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
-  .btn-sm:hover { border-color: var(--border2); color: var(--text); background: var(--bg2); }
-
-  /* Session area */
-  .session { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-
-  /* Question card */
-  .q-card { margin: 16px 20px 0; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; flex-shrink: 0; }
-  .q-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .q-badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; letter-spacing: 0.04em; text-transform: uppercase; }
-  .q-badge.sql { background: var(--blue-soft); color: var(--blue); }
-  .q-badge.product { background: var(--teal-soft); color: var(--teal); }
-  .q-badge.behavioral { background: var(--amber-soft); color: var(--amber); }
-  .q-level { font-size: 10px; color: var(--text3); }
-  .q-num { margin-left: auto; font-size: 10px; color: var(--text3); }
-  .q-text { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.5; margin-bottom: 10px; }
-  .q-hint { font-size: 12px; color: var(--text3); display: flex; align-items: flex-start; gap: 6px; padding: 8px 10px; background: var(--bg3); border-radius: var(--radius-sm); }
-
-  /* Framework tracker */
-  .fw-bar { margin: 10px 20px 0; flex-shrink: 0; }
-  .fw-inner { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
-  .fw-title { font-size: 10px; color: var(--text3); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 8px; }
-  .fw-steps { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-  .fw-step { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--text3); transition: all 0.3s; }
-  .fw-step.done { background: var(--green-soft); border-color: transparent; color: var(--green); }
-  .fw-step.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 500; }
-  .fw-arrow { color: var(--text3); font-size: 12px; }
-
-  /* Transcript */
-  .transcript-wrap { margin: 10px 20px 0; flex: 1; min-height: 120px; }
-  .transcript { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; min-height: 100px; max-height: 260px; overflow-y: auto; font-size: 13px; color: var(--text2); line-height: 1.7; }
-  .transcript-placeholder { color: var(--text3); font-style: italic; font-size: 13px; }
-  .transcript-word { transition: color 0.2s; }
-  .recording-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--red); }
-  .rec-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: pulse 1s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  /* Feedback */
-  .feedback-wrap { margin: 10px 20px; flex-shrink: 0; display: none; }
-  .feedback-wrap.visible { display: block; }
-  .feedback-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-  .feedback-scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-bottom: 1px solid var(--border); }
-  .score-cell { padding: 10px 14px; border-right: 1px solid var(--border); }
-  .score-cell:last-child { border-right: none; }
-  .score-label { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
-  .score-val { font-size: 18px; font-weight: 600; }
-  .score-val.good { color: var(--green); }
-  .score-val.mid { color: var(--amber); }
-  .score-val.low { color: var(--red); }
-  .feedback-body { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.7; }
-  .feedback-body strong { color: var(--text); font-weight: 500; }
-  .feedback-missing { margin-top: 8px; padding: 8px 10px; background: var(--amber-soft); border-radius: var(--radius-sm); font-size: 12px; color: var(--amber); }
-  .feedback-actions { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
-  .btn-retry { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s; }
-  .btn-retry:hover { color: var(--text); border-color: var(--border2); }
-  .btn-next { flex: 2; padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent); cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
-  .btn-next:hover { background: var(--accent); color: #fff; }
-
-  /* Controls */
-  .controls { padding: 12px 20px 16px; border-top: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; display: flex; align-items: flex-end; gap: 10px; }
-  .mic-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border2); background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; font-size: 18px; }
-  .mic-btn:hover { border-color: var(--border2); background: var(--bg); }
-  .mic-btn.recording { background: var(--red-soft); border-color: var(--red); animation: mic-pulse 1.5s infinite; }
-  @keyframes mic-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,0.3)} 50%{box-shadow:0 0 0 8px rgba(248,113,113,0)} }
-  .input-wrap { flex: 1; position: relative; }
-  .answer-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--text); resize: none; min-height: 44px; max-height: 120px; font-family: inherit; line-height: 1.5; transition: border-color 0.15s; }
-  .answer-input:focus { outline: none; border-color: var(--border2); }
-  .answer-input::placeholder { color: var(--text3); }
-  .submit-btn { padding: 10px 18px; border-radius: var(--radius-sm); border: none; background: var(--accent); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; flex-shrink: 0; transition: all 0.15s; height: 44px; }
-  .submit-btn:hover { background: #8b7af8; }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* Loading state */
-  .loading-dots { display: inline-flex; gap: 4px; }
-  .loading-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: dot 1.2s infinite; }
-  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
-  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes dot { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
-
-  /* Start screen */
-  .start-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 20px; text-align: center; }
-  .start-icon { font-size: 48px; margin-bottom: 16px; }
-  .start-title { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-  .start-desc { font-size: 13px; color: var(--text2); max-width: 360px; line-height: 1.7; margin-bottom: 24px; }
-  .start-btn { padding: 11px 28px; border-radius: var(--radius); border: none; background: var(--accent); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .start-btn:hover { background: #8b7af8; transform: translateY(-1px); }
-  .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; max-width: 500px; margin-bottom: 24px; }
-  .cat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; transition: all 0.15s; text-align: left; }
-  .cat-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .start-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+  .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 500px; margin: 20px 0; }
+  .cat-card { background: var(--bg2); padding: 15px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; }
   .cat-card.selected { border-color: var(--accent); background: var(--accent-soft); }
-  .cat-icon { font-size: 20px; margin-bottom: 6px; }
-  .cat-name { font-size: 12px; font-weight: 600; color: var(--text); }
-  .cat-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
-
-  /* API key screen */
-  .apikey-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 20px; text-align: center; }
-  .apikey-form { width: 100%; max-width: 400px; text-align: left; }
-  .field-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; display: block; }
-  .field-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--text); margin-bottom: 10px; }
-  .field-input:focus { outline: none; border-color: var(--accent); }
-  .field-hint { font-size: 11px; color: var(--text3); margin-bottom: 16px; }
-  .field-hint a { color: var(--accent); }
-
-  /* History panel */
-  .history-panel { margin: 10px 20px 0; flex-shrink: 0; display: none; }
-  .history-panel.visible { display: block; }
-  .history-title { font-size: 11px; color: var(--text3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .history-list { display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; }
-  .history-item { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.15s; }
-  .history-item:hover { border-color: var(--border2); }
-  .hist-q { font-size: 12px; color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .hist-score { font-size: 11px; font-weight: 600; color: var(--green); flex-shrink: 0; }
-  .hist-badge { font-size: 10px; padding: 1px 6px; border-radius: 20px; flex-shrink: 0; }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
-
-  /* Responsive */
-  @media (max-width: 700px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .feedback-scores { grid-template-columns: repeat(2, 1fr); }
-  }
+  .session-screen { display: none; flex-direction: column; height: 100%; }
+  .q-card { margin: 20px; padding: 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); }
+  .controls { padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--bg2); }
+  .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .mic-btn.recording { background: var(--red-soft); color: var(--red); }
+  textarea { flex: 1; background: var(--bg3); color: white; padding: 10px; border-radius: 5px; border: 1px solid var(--border); }
+  button { padding: 10px 20px; background: var(--accent); border: none; color: white; border-radius: 5px; cursor: pointer; }
+  .feedback-wrap { padding: 20px; display: none; overflow-y: auto; }
+  .feedback-wrap.visible { display: block; }
 </style>
 </head>
 <body>
-
 <div class="layout">
-  <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">Interview Trainer</div>
-      <div class="logo-sub">Revenue · Product · Data</div>
-    </div>
-
-    <div class="nav-section">
-      <div class="nav-label">Practice</div>
-      <div class="nav-item active" onclick="setCategory('all')" id="nav-all">
-        <span class="icon">⚡</span> All questions
-        <span class="nav-count" id="cnt-all">30</span>
-      </div>
-      <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">
-        <span class="icon">🗄</span> SQL / Python
-        <span class="nav-count" id="cnt-sql">12</span>
-      </div>
-      <div class="nav-item" onclick="setCategory('product')" id="nav-product">
-        <span class="icon">💡</span> Product cases
-        <span class="nav-count" id="cnt-product">10</span>
-      </div>
-      <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">
-        <span class="icon">🎯</span> Behavioral
-        <span class="nav-count" id="cnt-behavioral">8</span>
-      </div>
-    </div>
-
-    <div class="nav-section" style="margin-top:8px">
-      <div class="nav-label">Settings</div>
-
-      <div class="nav-item" onclick="resetProgress()">
-        <span class="icon">🔄</span> Reset progress
-      </div>
-    </div>
-
-    <div class="sidebar-stats">
-      <div class="stat-row">
-        <div class="stat-item"><div class="stat-val" id="stat-done">0</div><div class="stat-label">answered</div></div>
-        <div class="stat-item"><div class="stat-val" id="stat-avg">—</div><div class="stat-label">avg score</div></div>
-        <div class="stat-item"><div class="stat-val" id="stat-streak">0🔥</div><div class="stat-label">streak</div></div>
-      </div>
-      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-      <div class="progress-label"><span id="progress-label-left">0 done</span><span id="progress-label-right">30 total</span></div>
-    </div>
+    <div style="font-weight:bold; margin-bottom:20px;">Interview Trainer</div>
+    <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All (<span id="cnt-all">0</span>)</div>
+    <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL</div>
+    <div class="nav-item" onclick="setCategory('product')" id="nav-product">💡 Product</div>
+    <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">🎯 Behavioral</div>
   </div>
-
-  <!-- MAIN -->
-  <div class="main" id="main-area">
-    <!-- API KEY SCREEN (shown only if server misconfigured) -->
-    <div id="apikey-screen" style="display:none; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:40px 20px; text-align:center;">
-      <div style="font-size:36px; margin-bottom:16px;">⚙️</div>
-      <div style="font-size:18px; font-weight:600; margin-bottom:12px;">API not configured</div>
-      <div style="font-size:13px; color:var(--text2); max-width:380px; line-height:1.8; margin-bottom:24px;">
-        Add <code style="background:var(--bg3); padding:2px 7px; border-radius:4px; color:var(--accent)">GEMINI_API_KEY</code> to your Vercel project:<br><br>
-        Vercel Dashboard → Your project → <strong style="color:var(--text)">Settings → Environment Variables</strong><br><br>
-        Then redeploy. The key stays server-side — users never see it.
-      </div>
-      <div id="key-status" style="font-size:13px; color:var(--red); margin-bottom:20px;"></div>
-      <button class="start-btn" onclick="showStart()">Continue anyway →</button>
+  <div class="main">
+    <div id="start-screen" class="start-screen">
+      <h1>Ready to practice?</h1>
+      <div class="category-grid" id="cat-grid"></div>
+      <button onclick="startSession()">Start session →</button>
     </div>
-
-    <!-- START SCREEN -->
-    <div id="start-screen" class="start-screen" style="display:none;">
-      <div class="start-icon">🎙</div>
-      <div class="start-title">Ready to practice?</div>
-      <div class="start-desc">Answer out loud or type. You'll get scored on structure, business logic, terminology, and whether you close the loop with an action.</div>
-      <div class="category-grid">
-        <div class="cat-card selected" id="cat-all" onclick="selectCat('all')">
-          <div class="cat-icon">⚡</div>
-          <div class="cat-name">All</div>
-          <div class="cat-desc">Mixed practice</div>
-        </div>
-        <div class="cat-card" id="cat-sql" onclick="selectCat('sql')">
-          <div class="cat-icon">🗄</div>
-          <div class="cat-name">SQL / Python</div>
-          <div class="cat-desc">Think aloud logic</div>
-        </div>
-        <div class="cat-card" id="cat-product" onclick="selectCat('product')">
-          <div class="cat-icon">💡</div>
-          <div class="cat-name">Product cases</div>
-          <div class="cat-desc">VDSHV framework</div>
-        </div>
-        <div class="cat-card" id="cat-behavioral" onclick="selectCat('behavioral')">
-          <div class="cat-icon">🎯</div>
-          <div class="cat-name">Behavioral</div>
-          <div class="cat-desc">STAR method</div>
-        </div>
-        <div class="cat-card" id="cat-junior" onclick="selectCat('junior')">
-          <div class="cat-icon">🌱</div>
-          <div class="cat-name">Junior+</div>
-          <div class="cat-desc">Foundation level</div>
-        </div>
-        <div class="cat-card" id="cat-middle" onclick="selectCat('middle')">
-          <div class="cat-icon">🚀</div>
-          <div class="cat-name">Middle</div>
-          <div class="cat-desc">Advanced level</div>
-        </div>
-      </div>
-      <button class="start-btn" onclick="startSession()">Start session →</button>
-    </div>
-
-    <!-- SESSION SCREEN -->
-    <div id="session-screen" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
-      <div class="topbar">
-        <div class="topbar-title" id="session-title">Session</div>
-        <div class="spacer"></div>
-        <div class="lang-toggle">
-          <button class="lang-btn active" id="lang-en" onclick="setLang('en')">EN</button>
-          <button class="lang-btn" id="lang-uk" onclick="setLang('uk')">УК</button>
-        </div>
-        <select class="level-select" id="level-select" onchange="onLevelChange()">
-          <option value="all">All levels</option>
-          <option value="junior">Junior+</option>
-          <option value="middle">Middle</option>
-        </select>
-        <button class="btn-sm" onclick="nextQuestion()">⏭ Skip</button>
-        <button class="btn-sm" onclick="showStart()">✕ End</button>
-      </div>
-
-      <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
-        <!-- Question -->
-        <div class="q-card">
-          <div class="q-header">
-            <span class="q-badge" id="q-badge">SQL</span>
-            <span class="q-level" id="q-level">Junior+</span>
-            <span class="q-num" id="q-num">1 / 30</span>
-          </div>
-          <div class="q-text" id="q-text">Loading question...</div>
-          <div class="q-hint" id="q-hint">💡 Use VDSHV: Validate → Decompose → Segment → Hypothesize → Validate</div>
-        </div>
-
-        <!-- Framework bar -->
-        <div class="fw-bar">
-          <div class="fw-inner">
-            <div class="fw-title" id="fw-title">Framework</div>
-            <div class="fw-steps" id="fw-steps"></div>
-          </div>
-        </div>
-
-        <!-- History -->
-        <div class="history-panel" id="history-panel">
-          <div class="history-title">Previous attempts</div>
-          <div class="history-list" id="history-list"></div>
-        </div>
-
-        <!-- Transcript -->
-        <div class="transcript-wrap">
-          <div class="transcript" id="transcript">
-            <span class="transcript-placeholder" id="transcript-placeholder">Press 🎙 to answer by voice, or type below...</span>
-          </div>
-        </div>
-
-        <!-- Feedback -->
-        <div class="feedback-wrap" id="feedback-wrap">
-          <div class="feedback-card">
-            <div class="feedback-scores" id="feedback-scores"></div>
-            <div class="feedback-body" id="feedback-body"></div>
-            <div class="feedback-actions">
-              <button class="btn-retry" onclick="retryQuestion()">↩ Retry this question</button>
-              <button class="btn-next" onclick="nextQuestion()">Next question →</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Controls -->
+    <div id="session-screen" class="session-screen">
+      <div class="q-card"><h3 id="q-text">Loading...</h3></div>
+      <div id="feedback-wrap" class="feedback-wrap"></div>
       <div class="controls">
-        <div class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Hold to record">🎙</div>
-        <div class="input-wrap">
-          <textarea class="answer-input" id="answer-input" placeholder="Type your answer here... or use the mic" rows="1"
-            oninput="autoResize(this)" onkeydown="handleEnter(event)"></textarea>
-        </div>
-        <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Evaluate →</button>
+        <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</div>
+        <textarea id="answer-input" placeholder="Type or use mic..."></textarea>
+        <button id="submit-btn" onclick="submitAnswer()">Evaluate</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// ─── QUESTION BANK ───────────────────────────────────────────────────────────
 const QUESTIONS = [
-  // SQL / PYTHON
-  { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
-  { id:2, type:'sql', level:'junior', en:'Calculate average order value per user for the last 30 days. Walk me through your SQL logic.', uk:'Порахуй середній чек на користувача за останні 30 днів. Поясни SQL логіку.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: SUM(revenue) / COUNT(orders) or per-user aggregation?' },
-  { id:3, type:'sql', level:'junior', en:'Write a funnel analysis: signup → login → first purchase. How would you calculate step-by-step conversion rates?', uk:'Воронка: реєстрація → логін → перша покупка. Як порахуєш конверсію кожного кроку?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: GROUP BY step, COUNT DISTINCT users at each step' },
-  { id:4, type:'sql', level:'junior', en:'Find Day-7 retention. What tables do you need and what is your logic?', uk:'Знайди retention на день 7. Які таблиці потрібні і яка логіка?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Cohort logic: MIN(event_date) per user, then check if active on day 7' },
-  { id:5, type:'sql', level:'middle', en:'You have users and events tables. Find users who made a second purchase within 30 days of their first purchase.', uk:'Таблиці users та events. Знайди юзерів, які зробили другу покупку впродовж 30 днів після першої.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Sequencing problem → ROW_NUMBER() per user, then LAG or self-join' },
-  { id:6, type:'sql', level:'middle', en:'Two dashboards show different revenue numbers for the same month. How would you debug this SQL issue?', uk:'Два дашборди показують різний дохід за один місяць. Як дебажиш SQL?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Check: grain difference, filter differences, date truncation, JOIN duplicates' },
-  { id:7, type:'sql', level:'middle', en:'Calculate MoM revenue growth rate by channel. Explain aggregation and window function logic.', uk:'Порахуй MoM зростання доходу по каналах. Поясни логіку агрегації та window function.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'DATE_TRUNC + LAG(revenue) OVER (PARTITION BY channel ORDER BY month)' },
-  { id:8, type:'sql', level:'middle', en:'Find the top 3 revenue-generating products per country. Handle ties correctly.', uk:'Знайди топ-3 продукти за доходом по кожній країні. Правильно оброби однакові значення.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'RANK() vs DENSE_RANK() vs ROW_NUMBER() — which handles ties correctly?' },
-  { id:9, type:'sql', level:'junior', en:'How would you detect duplicate rows in a dataset and remove them? Explain your approach.', uk:'Як знайти дублікати в датасеті та видалити їх? Поясни підхід.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'ROW_NUMBER() OVER (PARTITION BY key_cols ORDER BY date) — keep rn = 1' },
-  { id:10, type:'sql', level:'middle', en:'Design a cohort retention table in Python with pandas. What steps would you follow?', uk:'Побудуй cohort retention таблицю в Python з pandas. Які кроки?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'Steps: parse dates → assign cohort_month → pivot table → divide by cohort size' },
-  { id:11, type:'sql', level:'middle', en:'Explain how you would run an A/B test analysis in Python. What statistical test and why?', uk:'Як провести A/B тест аналіз у Python? Який статистичний тест і чому?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'t-test for means, chi-square for proportions — state your H0 and significance level' },
-  { id:12, type:'sql', level:'junior', en:'You need to analyze revenue by device type and country. Walk through your Python/SQL approach.', uk:'Аналіз доходу по типу пристрою та країні. Поясни підхід Python/SQL.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'GROUP BY device, country — think about NULL handling and sorting' },
-
-  // PRODUCT CASES
-  { id:13, type:'product', level:'junior', en:'Revenue dropped 18% week-over-week. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% тиждень до тижня. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Revenue = Traffic × Conversion × AOV. Traffic is stable → focus on CR and AOV' },
-  { id:14, type:'product', level:'junior', en:'Conversion rate dropped from 5% to 3.8%. No product releases reported. What do you do?', uk:'Конверсія впала з 5% до 3.8%. Релізів не було. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, browser, country, acquisition channel. Check error logs.' },
-  { id:15, type:'product', level:'junior', en:'Traffic increased 30% but revenue stayed flat. Explain what happened.', uk:'Трафік виріс на 30%, а дохід залишився незмінним. Поясни що сталося.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Traffic quality issue? Bot traffic? Lower-intent users? AOV drop? Discount spike?' },
-  { id:16, type:'product', level:'junior', en:'Monthly churn increased from 4% to 7%. How would you investigate?', uk:'Місячний churn виріс з 4% до 7%. Як розслідуєш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by cohort, plan type, acquisition channel, usage level' },
-  { id:17, type:'product', level:'middle', en:'Revenue increased but churn also increased after a pricing change. What is your analysis?', uk:'Після зміни цін дохід виріс, але churn теж виріс. Який твій аналіз?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Trade-off analysis: who pays more? who leaves? short-term vs long-term revenue' },
-  { id:18, type:'product', level:'junior', en:'A newly built dashboard has only 10% adoption after 2 months. Why and what do you do?', uk:'Новий дашборд має лише 10% adoption через 2 місяці. Чому і що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'5 barrier types: Awareness, Relevance, Usability, Trust, Substitution' },
-  { id:19, type:'product', level:'middle', en:'AOV increased but total revenue decreased. Explain possible reasons and your plan.', uk:'Середній чек виріс, але загальний дохід впав. Поясни причини та план.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Volume dropped more than AOV increased. Why did order count fall?' },
-  { id:20, type:'product', level:'middle', en:'After a checkout redesign: add-to-cart is stable, but checkout completion dropped 15%. What do you do?', uk:'Після редизайну checkout: add-to-cart стабільний, але завершення checkout впало на 15%. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, payment method. Check UX changes, error rates, performance.' },
-  { id:20, type:'product', level:'middle', en:'MRR is stable but engagement metrics are declining. Is this a problem?', uk:'MRR стабільний але engagement падає. Це проблема?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'MRR is a lagging indicator. Engagement is a leading indicator of future churn.' },
-  { id:21, type:'product', level:'middle', en:'How would you measure the success of a new onboarding flow?', uk:'Як виміряєш успішність нового onboarding flow?', framework:'Metrics Framework', steps:['Clarify goal','Primary metric','Feature metrics','Guardrail metrics','Decision'], hint:'Goal → Primary metric → Feature adoption → Guardrail (churn, NPS)' },
-  { id:22, type:'product', level:'middle', en:'How would you increase revenue by 20% in the next quarter? What levers would you pull?', uk:'Як збільшити дохід на 20% за наступний квартал? Які важелі?', framework:'MECE Revenue', steps:['Acquisition','Retention','Expansion','Prioritize','Recommend'], hint:'Revenue = Acquisition + Retention + Expansion. Which has highest ROI?' },
-
-  // BEHAVIORAL
-  { id:23, type:'behavioral', level:'junior', en:'Tell me about a time you made a mistake in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: identified root cause → fixed process → prevented recurrence' },
-  { id:24, type:'behavioral', level:'junior', en:'Tell me about a time when your analysis changed a business decision.', uk:'Розкажи коли твій аналіз змінив бізнес-рішення.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Quantify the impact. What was the decision before vs after your analysis?' },
-  { id:25, type:'behavioral', level:'junior', en:'Describe a disagreement with a stakeholder about data or metrics.', uk:'Опиши незгоду зі стейкхолдером щодо даних або метрик.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: validated first, found mismatch type, aligned on definitions, created source of truth' },
-  { id:26, type:'behavioral', level:'junior', en:'Tell me about a time you had to explain a complex analysis to a non-technical audience.', uk:'Розкажи як пояснював складний аналіз нетехнічній аудиторії.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Adapted communication level, used visuals, focused on business impact not methodology' },
-  { id:27, type:'behavioral', level:'middle', en:'Tell me about your greatest impact on a business metric.', uk:'Розкажи про найбільший вплив на бізнес-метрику.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Be specific: what metric, by how much, over what timeframe' },
-  { id:28, type:'behavioral', level:'middle', en:'Describe a time you had to work with incomplete or messy data. What did you do?', uk:'Опиши ситуацію з неповними або брудними даними. Що робив?', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: validated assumptions, documented limitations, communicated uncertainty to stakeholders' },
-  { id:29, type:'behavioral', level:'middle', en:'Tell me about a project where you had to balance speed vs accuracy in your analysis.', uk:'Проект де треба було балансувати швидкість і точність аналізу.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show decision-making: context of urgency, what you traded off, what you communicated' },
-  { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
+  { id:1, type:'sql', level:'junior', en:'Find 7-day conversion rate.', framework:'SQL', steps:['Grain','Event','Logic'], hint:'Define grain.' },
+  { id:13, type:'product', level:'junior', en:'Revenue dropped 18%. Investigate.', framework:'VDSHV', steps:['Validate','Decompose'], hint:'Revenue = T * C * AOV' },
+  { id:23, type:'behavioral', level:'junior', en:'Tell me about a mistake you made.', framework:'STAR', steps:['Situation','Action'], hint:'Be honest.' }
+  // ВСТАВЬТЕ СЮДА ВЕСЬ ВАШ МАССИВ ИЗ 30 ВОПРОСОВ
 ];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let state = {
+let state = { category: 'all', currentQ: null, isRecording: false, recognition: null, currentTranscript: '' };
 
-  lang: 'en',
-  level: 'all',
-  category: 'all',
-  currentQ: null,
-  currentTranscript: '',
-  isRecording: false,
-  sessionHistory: JSON.parse(localStorage.getItem('session_history') || '[]'),
-  stats: JSON.parse(localStorage.getItem('interview_stats') || '{"done":0,"totalScore":0,"streak":0}'),
-  recognition: null,
-};
+function init() { updateCounts(); }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
-function init() {
-  updateCounts();
-  updateStats();
-  showStart();
+function setCategory(c) { 
+  state.category = c; 
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-'+c).classList.add('active');
 }
 
-function showApiKeyScreen() {
-  document.getElementById('apikey-screen').style.display = 'flex';
+function startSession() {
   document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('session-screen').style.display = 'none';
-}
-
-// ─── QUESTIONS ────────────────────────────────────────────────────────────────
-function getFilteredQuestions() {
-  return QUESTIONS.filter(q => {
-    if (state.category === 'junior') return q.level === 'junior';
-    if (state.category === 'middle') return q.level === 'middle';
-    if (state.category !== 'all') return q.type === state.category;
-    if (state.level === 'junior') return q.level === 'junior';
-    if (state.level === 'middle') return q.level === 'middle';
-    return true;
-  });
-}
-
-function loadQuestion() {
-  const pool = getFilteredQuestions();
-  if (!pool.length) return;
-  const q = pool[Math.floor(Math.random() * pool.length)];
-  state.currentQ = q;
-  state.currentTranscript = '';
-  renderQuestion();
-  resetFeedback();
-  updateHistoryPanel();
-}
-
-function renderQuestion() {
-  const q = state.currentQ;
-  if (!q) return;
-  const badge = document.getElementById('q-badge');
-  badge.textContent = q.type === 'sql' ? 'SQL / Python' : q.type === 'product' ? 'Product case' : 'Behavioral';
-  badge.className = 'q-badge ' + q.type;
-  document.getElementById('q-level').textContent = q.level === 'junior' ? '🌱 Junior+' : '🚀 Middle';
-  document.getElementById('q-text').textContent = q[state.lang] || q.en;
-  document.getElementById('q-hint').innerHTML = '💡 ' + q.hint;
-  renderFramework(q);
-  document.getElementById('session-title').textContent = q.type === 'sql' ? 'SQL / Python' : q.type === 'product' ? 'Product case' : 'Behavioral';
-  const total = getFilteredQuestions().length;
-  document.getElementById('q-num').textContent = `${state.stats.done % total + 1} / ${total}`;
-  document.getElementById('transcript').innerHTML = '<span class="transcript-placeholder">Press 🎙 to answer by voice, or type below...</span>';
-  document.getElementById('answer-input').value = '';
-}
-
-function renderFramework(q) {
-  document.getElementById('fw-title').textContent = q.framework;
-  const steps = document.getElementById('fw-steps');
-  steps.innerHTML = '';
-  q.steps.forEach((s, i) => {
-    if (i > 0) steps.innerHTML += '<span class="fw-arrow">→</span>';
-    const el = document.createElement('span');
-    el.className = 'fw-step';
-    el.textContent = s;
-    el.id = 'fw-step-' + i;
-    steps.appendChild(el);
-  });
-}
-
-function highlightFrameworkStep(stepIndex) {
-  if (!state.currentQ) return;
-  state.currentQ.steps.forEach((_, i) => {
-    const el = document.getElementById('fw-step-' + i);
-    if (!el) return;
-    if (i < stepIndex) el.className = 'fw-step done';
-    else if (i === stepIndex) el.className = 'fw-step active';
-    else el.className = 'fw-step';
-  });
-}
-
-function nextQuestion() {
+  document.getElementById('session-screen').style.display = 'flex';
   loadQuestion();
 }
 
-function retryQuestion() {
-  state.currentTranscript = '';
-  document.getElementById('transcript').innerHTML = '<span class="transcript-placeholder">Press 🎙 to answer by voice, or type below...</span>';
-  document.getElementById('answer-input').value = '';
-  resetFeedback();
-}
-
-function resetFeedback() {
+function loadQuestion() {
+  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
+  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
+  document.getElementById('q-text').textContent = state.currentQ.en;
   document.getElementById('feedback-wrap').classList.remove('visible');
-  document.getElementById('history-panel').classList.remove('visible');
 }
 
-function updateCounts() {
-  const types = ['sql','product','behavioral'];
-  types.forEach(t => {
-    document.getElementById('cnt-' + t).textContent = QUESTIONS.filter(q => q.type === t).length;
-  });
-  document.getElementById('cnt-all').textContent = QUESTIONS.length;
-}
-
-// ─── VOICE ────────────────────────────────────────────────────────────────────
 function toggleMic() {
-  if (state.isRecording) {
-    stopRecording();
-  } else {
-    startRecording();
-  }
+  if (state.isRecording) { stopRecording(); } else { startRecording(); }
 }
 
 function startRecording() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Speech recognition is only supported in Chrome. Please use Chrome or type your answer.');
-    return;
-  }
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
-  state.recognition = recognition;
-
-  const transcript = document.getElementById('transcript');
-  transcript.innerHTML = '<span class="recording-indicator"><span class="rec-dot"></span>Recording...</span>';
-  
-  let finalTranscript = '';
-  let stepIndex = 0;
-
-  recognition.onresult = (event) => {
-    let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript + ' ';
-        // advance framework step heuristically
-        const lowerT = finalTranscript.toLowerCase();
-        const q = state.currentQ;
-        if (q && stepIndex < q.steps.length - 1) {
-          const stepKeywords = [['validate','check','data issue','real','tracking'], ['decompose','break','revenue','traffic','conversion'], ['segment','device','channel','country','cohort'], ['hypothesis','suspect','likely','driver'], ['validate','confirm','check if','test']];
-          const idx = Math.min(stepIndex + 1, stepKeywords.length - 1);
-          if (stepKeywords[idx] && stepKeywords[idx].some(k => lowerT.includes(k))) {
-            stepIndex++;
-            highlightFrameworkStep(stepIndex);
-          }
-        }
-      } else {
-        interim += event.results[i][0].transcript;
-      }
-    }
-    state.currentTranscript = finalTranscript;
-    transcript.innerHTML = `<span class="recording-indicator"><span class="rec-dot"></span>Recording...</span><br><br>${finalTranscript}<span style="color:var(--text3)">${interim}</span>`;
+  if (!SpeechRecognition) return alert('No support');
+  const rec = new SpeechRecognition();
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.onresult = (e) => {
+    let t = '';
+    for(let i=e.resultIndex; i<e.results.length; i++) t += e.results[i][0].transcript;
+    document.getElementById('answer-input').value = t;
   };
-
-  recognition.onerror = (e) => {
-    console.error('Speech error:', e.error);
-    stopRecording();
-  };
-  recognition.onend = () => { if (state.isRecording) stopRecording(); };
-
-  recognition.start();
+  rec.start();
+  state.recognition = rec;
   state.isRecording = true;
-  const btn = document.getElementById('mic-btn');
-  btn.classList.add('recording');
-  btn.textContent = '⏹';
-  highlightFrameworkStep(0);
+  document.getElementById('mic-btn').classList.add('recording');
 }
 
 function stopRecording() {
-  if (state.recognition) {
-    state.recognition.stop();
-    state.recognition = null;
-  }
+  state.recognition.stop();
   state.isRecording = false;
-  const btn = document.getElementById('mic-btn');
-  btn.classList.remove('recording');
-  btn.textContent = '🎙';
-  if (state.currentTranscript.trim()) {
-    document.getElementById('answer-input').value = state.currentTranscript.trim();
-  }
+  document.getElementById('mic-btn').classList.remove('recording');
 }
 
-// ─── SUBMIT ───────────────────────────────────────────────────────────────────
 async function submitAnswer() {
-  const answer = document.getElementById('answer-input').value.trim() || state.currentTranscript.trim();
-  if (!answer) { alert('Please provide an answer first — use the mic or type below.'); return; }
-
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
-
-  // Show answer in transcript
-  if (!state.currentTranscript) {
-    document.getElementById('transcript').innerHTML = answer;
-  }
-
-  try {
-    const feedback = await getGeminiFeedback(state.currentQ, answer, state.lang);
-    displayFeedback(feedback, answer);
-    saveFeedbackToHistory(feedback, answer);
-  } catch (err) {
-    console.error(err);
-    displayFeedback({ structure: 0, business: 0, terminology: 0, closesLoop: false, good: 'Could not connect to Gemini. Check your API key in sidebar.', missing: err.message, totalScore: 0 }, answer);
-  }
-
-  btn.disabled = false;
-  btn.textContent = 'Evaluate →';
-}
-
-// ─── GEMINI API ───────────────────────────────────────────────────────────────
-async function getGeminiFeedback(q, answer, lang) {
-  const qText = q[lang] || q.en;
-  const framework = q.framework;
-  const steps = q.steps.join(' → ');
-
-  const systemPrompt = `You are an expert interviewer for Revenue Analyst, Product Analyst, and Data Analyst roles at European tech companies. You give concise, actionable feedback.
-
-The candidate is practicing interview answers. Evaluate their response strictly but fairly.
-
-Question type: ${q.type}
-Framework expected: ${framework} (${steps})
-Question: "${qText}"
-Candidate answer: "${answer}"
-
-Return ONLY valid JSON, no markdown, no explanation outside JSON:
-{
-  "structure": <0-10, how well they structured their answer>,
-  "business": <0-10, business logic and domain knowledge>,
-  "terminology": <0-10, correct use of analyst terms>,
-  "closesLoop": <true/false, did they end with a concrete action/recommendation>,
-  "totalScore": <0-10, weighted overall>,
-  "good": "<1-2 sentences: what they did well. Be specific.>",
-  "missing": "<1-2 sentences: what was missing or weak. Be specific with examples of what they should have said.>",
-  "betterPhrase": "<one example sentence that would make their answer stronger, formatted as a quote>"
-}`;
-
-  const url = '/api/feedback';
-
-  const res = await fetch(url, {
+  const answer = document.getElementById('answer-input').value;
+  const res = await fetch('/api/feedback', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: systemPrompt }] }],
-      generationConfig: { temperature: 0.3, maxOutputTokens: 600 }
-    })
+    body: JSON.stringify({ contents: [{ parts: [{ text: `Eval: ${state.currentQ.en}. Ans: ${answer}` }] }] })
   });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error?.message || 'Gemini API error ' + res.status);
-  }
-
   const data = await res.json();
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  const cleaned = rawText.replace(/```json|```/g, '').trim();
-  return JSON.parse(cleaned);
+  const fw = document.getElementById('feedback-wrap');
+  fw.innerHTML = data.candidates[0].content.parts[0].text;
+  fw.classList.add('visible');
 }
 
-// ─── FEEDBACK DISPLAY ────────────────────────────────────────────────────────
-function displayFeedback(fb, answer) {
-  const wrap = document.getElementById('feedback-wrap');
-  wrap.classList.add('visible');
-
-  const scores = document.getElementById('feedback-scores');
-  const getClass = v => v >= 8 ? 'good' : v >= 6 ? 'mid' : 'low';
-
-  scores.innerHTML = `
-    <div class="score-cell">
-      <div class="score-label">Structure</div>
-      <div class="score-val ${getClass(fb.structure)}">${fb.structure}/10</div>
-    </div>
-    <div class="score-cell">
-      <div class="score-label">Business logic</div>
-      <div class="score-val ${getClass(fb.business)}">${fb.business}/10</div>
-    </div>
-    <div class="score-cell">
-      <div class="score-label">Terminology</div>
-      <div class="score-val ${getClass(fb.terminology)}">${fb.terminology}/10</div>
-    </div>
-    <div class="score-cell">
-      <div class="score-label">Closes loop</div>
-      <div class="score-val ${fb.closesLoop ? 'good' : 'low'}">${fb.closesLoop ? '✓ Yes' : '✗ No'}</div>
-    </div>
-  `;
-
-  const body = document.getElementById('feedback-body');
-  body.innerHTML = `
-    <div style="margin-bottom:8px"><strong>✓ Good:</strong> ${fb.good}</div>
-    <div style="margin-bottom:8px"><strong>△ Missing:</strong> ${fb.missing}</div>
-    ${fb.betterPhrase ? `<div style="padding:8px 10px; background:var(--accent-soft); border-radius:var(--radius-sm); font-size:12px; color:var(--accent)"><strong>Better phrasing:</strong> "${fb.betterPhrase}"</div>` : ''}
-  `;
-
-  // Text-to-speech feedback
-  if (window.speechSynthesis && fb.good) {
-    const text = `Score: ${fb.totalScore} out of 10. ${fb.good} ${fb.missing}`;
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1.1;
-    utter.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
-    setTimeout(() => window.speechSynthesis.speak(utter), 300);
-  }
-
-  // Mark framework steps as done
-  if (state.currentQ) {
-    state.currentQ.steps.forEach((_, i) => {
-      const el = document.getElementById('fw-step-' + i);
-      if (el) el.className = fb.totalScore >= 7 ? 'fw-step done' : 'fw-step';
-    });
-  }
-
-  // scroll to feedback
-  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// ─── HISTORY ──────────────────────────────────────────────────────────────────
-function saveFeedbackToHistory(fb, answer) {
-  if (!state.currentQ) return;
-
-  // update stats
-  state.stats.done++;
-  state.stats.totalScore += fb.totalScore || 0;
-  if (fb.totalScore >= 7) state.stats.streak++;
-  else state.stats.streak = 0;
-  localStorage.setItem('interview_stats', JSON.stringify(state.stats));
-  updateStats();
-
-  // save attempt
-  const attempt = {
-    qId: state.currentQ.id,
-    qText: state.currentQ[state.lang] || state.currentQ.en,
-    type: state.currentQ.type,
-    score: fb.totalScore,
-    answer: answer.substring(0, 200),
-    date: Date.now()
-  };
-  state.sessionHistory.unshift(attempt);
-  if (state.sessionHistory.length > 50) state.sessionHistory.pop();
-  localStorage.setItem('session_history', JSON.stringify(state.sessionHistory));
-  updateHistoryPanel();
-}
-
-function updateHistoryPanel() {
-  const qId = state.currentQ?.id;
-  const attempts = state.sessionHistory.filter(a => a.qId === qId);
-  if (!attempts.length) return;
-  const panel = document.getElementById('history-panel');
-  panel.classList.add('visible');
-  const list = document.getElementById('history-list');
-  list.innerHTML = attempts.slice(0, 5).map(a => `
-    <div class="history-item">
-      <span class="hist-badge q-badge ${a.type}">${a.type}</span>
-      <span class="hist-q">${a.answer}...</span>
-      <span class="hist-score" style="color:${a.score>=7?'var(--green)':a.score>=5?'var(--amber)':'var(--red)'}">
-        ${a.score}/10
-      </span>
-    </div>
-  `).join('');
-}
-
-function updateStats() {
-  document.getElementById('stat-done').textContent = state.stats.done;
-  const avg = state.stats.done > 0 ? (state.stats.totalScore / state.stats.done).toFixed(1) : '—';
-  document.getElementById('stat-avg').textContent = avg;
-  document.getElementById('stat-streak').textContent = state.stats.streak + '🔥';
-  const total = QUESTIONS.length;
-  const pct = Math.min(100, Math.round((state.stats.done / total) * 100));
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-label-left').textContent = state.stats.done + ' done';
-  document.getElementById('progress-label-right').textContent = total + ' total';
-}
-
-function resetProgress() {
-  if (!confirm('Reset all progress and history?')) return;
-  state.stats = { done: 0, totalScore: 0, streak: 0 };
-  state.sessionHistory = [];
-  localStorage.removeItem('interview_stats');
-  localStorage.removeItem('session_history');
-  updateStats();
-}
-
-// ─── INPUT HELPERS ────────────────────────────────────────────────────────────
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
-
-function handleEnter(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    submitAnswer();
-  }
-}
-
-// ─── BOOT ─────────────────────────────────────────────────────────────────────
+function updateCounts() { /* ... код ... */ }
 init();
 </script>
 </body>
