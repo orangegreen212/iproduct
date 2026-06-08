@@ -106,6 +106,23 @@ async function submitAnswer() {
   fw.innerHTML = text;
   fw.classList.add('visible');
 }
+ 
+function showStart() {
+  document.getElementById('start-screen').style.display = 'flex';
+  document.getElementById('session-screen').style.display = 'none';
+}
+
+function setLang(lang) {
+  state.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('lang-'+lang).classList.add('active');
+  if(state.currentQ) renderQuestion();
+}
+
+function onLevelChange() {
+  state.level = document.getElementById('level-select').value;
+  loadQuestion();
+}
 
 function updateCounts() {
   ['all','sql','product','behavioral'].forEach(c => {
