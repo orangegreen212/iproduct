@@ -108,7 +108,6 @@
   .transcript-wrap { margin: 10px 20px 0; flex: 1; min-height: 120px; }
   .transcript { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; min-height: 100px; max-height: 260px; overflow-y: auto; font-size: 13px; color: var(--text2); line-height: 1.7; }
   .transcript-placeholder { color: var(--text3); font-style: italic; font-size: 13px; }
-  .transcript-word { transition: color 0.2s; }
   .recording-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--red); }
   .rec-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
@@ -127,7 +126,6 @@
   .score-val.low { color: var(--red); }
   .feedback-body { padding: 12px 14px; font-size: 13px; color: var(--text2); line-height: 1.7; }
   .feedback-body strong { color: var(--text); font-weight: 500; }
-  .feedback-missing { margin-top: 8px; padding: 8px 10px; background: var(--amber-soft); border-radius: var(--radius-sm); font-size: 12px; color: var(--amber); }
   .feedback-actions { display: flex; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border); }
   .btn-retry { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; font-size: 12px; font-weight: 500; transition: all 0.15s; }
   .btn-retry:hover { color: var(--text); border-color: var(--border2); }
@@ -170,15 +168,6 @@
   .cat-name { font-size: 12px; font-weight: 600; color: var(--text); }
   .cat-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  /* API key screen */
-  .apikey-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 40px 20px; text-align: center; }
-  .apikey-form { width: 100%; max-width: 400px; text-align: left; }
-  .field-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; display: block; }
-  .field-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; color: var(--text); margin-bottom: 10px; }
-  .field-input:focus { outline: none; border-color: var(--accent); }
-  .field-hint { font-size: 11px; color: var(--text3); margin-bottom: 16px; }
-  .field-hint a { color: var(--accent); }
-
   /* History panel */
   .history-panel { margin: 10px 20px 0; flex-shrink: 0; display: none; }
   .history-panel.visible { display: block; }
@@ -195,7 +184,6 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 4px; }
 
-  /* Responsive */
   @media (max-width: 700px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { display: none; }
@@ -235,7 +223,6 @@
 
     <div class="nav-section" style="margin-top:8px">
       <div class="nav-label">Settings</div>
-
       <div class="nav-item" onclick="resetProgress()">
         <span class="icon">🔄</span> Reset progress
       </div>
@@ -254,18 +241,6 @@
 
   <!-- MAIN -->
   <div class="main" id="main-area">
-    <!-- API KEY SCREEN (shown only if server misconfigured) -->
-    <div id="apikey-screen" style="display:none; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:40px 20px; text-align:center;">
-      <div style="font-size:36px; margin-bottom:16px;">⚙️</div>
-      <div style="font-size:18px; font-weight:600; margin-bottom:12px;">API not configured</div>
-      <div style="font-size:13px; color:var(--text2); max-width:380px; line-height:1.8; margin-bottom:24px;">
-        Add <code style="background:var(--bg3); padding:2px 7px; border-radius:4px; color:var(--accent)">GEMINI_API_KEY</code> to your Vercel project:<br><br>
-        Vercel Dashboard → Your project → <strong style="color:var(--text)">Settings → Environment Variables</strong><br><br>
-        Then redeploy. The key stays server-side — users never see it.
-      </div>
-      <div id="key-status" style="font-size:13px; color:var(--red); margin-bottom:20px;"></div>
-      <button class="start-btn" onclick="showStart()">Continue anyway →</button>
-    </div>
 
     <!-- START SCREEN -->
     <div id="start-screen" class="start-screen" style="display:none;">
@@ -293,16 +268,6 @@
           <div class="cat-name">Behavioral</div>
           <div class="cat-desc">STAR method</div>
         </div>
-        <div class="cat-card" id="cat-junior" onclick="selectCat('junior')">
-          <div class="cat-icon">🌱</div>
-          <div class="cat-name">Junior+</div>
-          <div class="cat-desc">Foundation level</div>
-        </div>
-        <div class="cat-card" id="cat-middle" onclick="selectCat('middle')">
-          <div class="cat-icon">🚀</div>
-          <div class="cat-name">Middle</div>
-          <div class="cat-desc">Advanced level</div>
-        </div>
       </div>
       <button class="start-btn" onclick="startSession()">Start session →</button>
     </div>
@@ -326,7 +291,6 @@
       </div>
 
       <div style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
-        <!-- Question -->
         <div class="q-card">
           <div class="q-header">
             <span class="q-badge" id="q-badge">SQL</span>
@@ -337,7 +301,6 @@
           <div class="q-hint" id="q-hint">💡 Use VDSHV: Validate → Decompose → Segment → Hypothesize → Validate</div>
         </div>
 
-        <!-- Framework bar -->
         <div class="fw-bar">
           <div class="fw-inner">
             <div class="fw-title" id="fw-title">Framework</div>
@@ -345,20 +308,17 @@
           </div>
         </div>
 
-        <!-- History -->
         <div class="history-panel" id="history-panel">
           <div class="history-title">Previous attempts</div>
           <div class="history-list" id="history-list"></div>
         </div>
 
-        <!-- Transcript -->
         <div class="transcript-wrap">
           <div class="transcript" id="transcript">
             <span class="transcript-placeholder" id="transcript-placeholder">Press 🎙 to answer by voice, or type below...</span>
           </div>
         </div>
 
-        <!-- Feedback -->
         <div class="feedback-wrap" id="feedback-wrap">
           <div class="feedback-card">
             <div class="feedback-scores" id="feedback-scores"></div>
@@ -371,7 +331,6 @@
         </div>
       </div>
 
-      <!-- Controls -->
       <div class="controls">
         <div class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Hold to record">🎙</div>
         <div class="input-wrap">
@@ -385,49 +344,13 @@
 </div>
 
 <script>
-// ─── QUESTION BANK ───────────────────────────────────────────────────────────
 const QUESTIONS = [
-  // SQL / PYTHON
   { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
-  { id:2, type:'sql', level:'junior', en:'Calculate average order value per user for the last 30 days. Walk me through your SQL logic.', uk:'Порахуй середній чек на користувача за останні 30 днів. Поясни SQL логіку.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: SUM(revenue) / COUNT(orders) or per-user aggregation?' },
-  { id:3, type:'sql', level:'junior', en:'Write a funnel analysis: signup → login → first purchase. How would you calculate step-by-step conversion rates?', uk:'Воронка: реєстрація → логін → перша покупка. Як порахуєш конверсію кожного кроку?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: GROUP BY step, COUNT DISTINCT users at each step' },
-  { id:4, type:'sql', level:'junior', en:'Find Day-7 retention. What tables do you need and what is your logic?', uk:'Знайди retention на день 7. Які таблиці потрібні і яка логіка?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Cohort logic: MIN(event_date) per user, then check if active on day 7' },
-  { id:5, type:'sql', level:'middle', en:'You have users and events tables. Find users who made a second purchase within 30 days of their first purchase.', uk:'Таблиці users та events. Знайди юзерів, які зробили другу покупку впродовж 30 днів після першої.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Sequencing problem → ROW_NUMBER() per user, then LAG or self-join' },
-  { id:6, type:'sql', level:'middle', en:'Two dashboards show different revenue numbers for the same month. How would you debug this SQL issue?', uk:'Два дашборди показують різний дохід за один місяць. Як дебажиш SQL?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Check: grain difference, filter differences, date truncation, JOIN duplicates' },
-  { id:7, type:'sql', level:'middle', en:'Calculate MoM revenue growth rate by channel. Explain aggregation and window function logic.', uk:'Порахуй MoM зростання доходу по каналах. Поясни логіку агрегації та window function.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'DATE_TRUNC + LAG(revenue) OVER (PARTITION BY channel ORDER BY month)' },
-  { id:8, type:'sql', level:'middle', en:'Find the top 3 revenue-generating products per country. Handle ties correctly.', uk:'Знайди топ-3 продукти за доходом по кожній країні. Правильно оброби однакові значення.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'RANK() vs DENSE_RANK() vs ROW_NUMBER() — which handles ties correctly?' },
-  { id:9, type:'sql', level:'junior', en:'How would you detect duplicate rows in a dataset and remove them? Explain your approach.', uk:'Як знайти дублікати в датасеті та видалити їх? Поясни підхід.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'ROW_NUMBER() OVER (PARTITION BY key_cols ORDER BY date) — keep rn = 1' },
-  { id:10, type:'sql', level:'middle', en:'Design a cohort retention table in Python with pandas. What steps would you follow?', uk:'Побудуй cohort retention таблицю в Python з pandas. Які кроки?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'Steps: parse dates → assign cohort_month → pivot table → divide by cohort size' },
-  { id:11, type:'sql', level:'middle', en:'Explain how you would run an A/B test analysis in Python. What statistical test and why?', uk:'Як провести A/B тест аналіз у Python? Який статистичний тест і чому?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'t-test for means, chi-square for proportions — state your H0 and significance level' },
-  { id:12, type:'sql', level:'junior', en:'You need to analyze revenue by device type and country. Walk through your Python/SQL approach.', uk:'Аналіз доходу по типу пристрою та країні. Поясни підхід Python/SQL.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'GROUP BY device, country — think about NULL handling and sorting' },
-
-  // PRODUCT CASES
-  { id:13, type:'product', level:'junior', en:'Revenue dropped 18% week-over-week. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% тиждень до тижня. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Revenue = Traffic × Conversion × AOV. Traffic is stable → focus on CR and AOV' },
-  { id:14, type:'product', level:'junior', en:'Conversion rate dropped from 5% to 3.8%. No product releases reported. What do you do?', uk:'Конверсія впала з 5% до 3.8%. Релізів не було. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, browser, country, acquisition channel. Check error logs.' },
-  { id:15, type:'product', level:'junior', en:'Traffic increased 30% but revenue stayed flat. Explain what happened.', uk:'Трафік виріс на 30%, а дохід залишився незмінним. Поясни що сталося.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Traffic quality issue? Bot traffic? Lower-intent users? AOV drop? Discount spike?' },
-  { id:16, type:'product', level:'junior', en:'Monthly churn increased from 4% to 7%. How would you investigate?', uk:'Місячний churn виріс з 4% до 7%. Як розслідуєш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by cohort, plan type, acquisition channel, usage level' },
-  { id:17, type:'product', level:'middle', en:'Revenue increased but churn also increased after a pricing change. What is your analysis?', uk:'Після зміни цін дохід виріс, але churn теж виріс. Який твій аналіз?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Trade-off analysis: who pays more? who leaves? short-term vs long-term revenue' },
-  { id:18, type:'product', level:'junior', en:'A newly built dashboard has only 10% adoption after 2 months. Why and what do you do?', uk:'Новий дашборд має лише 10% adoption через 2 місяці. Чому і що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'5 barrier types: Awareness, Relevance, Usability, Trust, Substitution' },
-  { id:19, type:'product', level:'middle', en:'AOV increased but total revenue decreased. Explain possible reasons and your plan.', uk:'Середній чек виріс, але загальний дохід впав. Поясни причини та план.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Volume dropped more than AOV increased. Why did order count fall?' },
-  { id:20, type:'product', level:'middle', en:'After a checkout redesign: add-to-cart is stable, but checkout completion dropped 15%. What do you do?', uk:'Після редизайну checkout: add-to-cart стабільний, але завершення checkout впало на 15%. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, payment method. Check UX changes, error rates, performance.' },
-  { id:20, type:'product', level:'middle', en:'MRR is stable but engagement metrics are declining. Is this a problem?', uk:'MRR стабільний але engagement падає. Це проблема?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'MRR is a lagging indicator. Engagement is a leading indicator of future churn.' },
-  { id:21, type:'product', level:'middle', en:'How would you measure the success of a new onboarding flow?', uk:'Як виміряєш успішність нового onboarding flow?', framework:'Metrics Framework', steps:['Clarify goal','Primary metric','Feature metrics','Guardrail metrics','Decision'], hint:'Goal → Primary metric → Feature adoption → Guardrail (churn, NPS)' },
-  { id:22, type:'product', level:'middle', en:'How would you increase revenue by 20% in the next quarter? What levers would you pull?', uk:'Як збільшити дохід на 20% за наступний квартал? Які важелі?', framework:'MECE Revenue', steps:['Acquisition','Retention','Expansion','Prioritize','Recommend'], hint:'Revenue = Acquisition + Retention + Expansion. Which has highest ROI?' },
-
-  // BEHAVIORAL
-  { id:23, type:'behavioral', level:'junior', en:'Tell me about a time you made a mistake in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: identified root cause → fixed process → prevented recurrence' },
-  { id:24, type:'behavioral', level:'junior', en:'Tell me about a time when your analysis changed a business decision.', uk:'Розкажи коли твій аналіз змінив бізнес-рішення.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Quantify the impact. What was the decision before vs after your analysis?' },
-  { id:25, type:'behavioral', level:'junior', en:'Describe a disagreement with a stakeholder about data or metrics.', uk:'Опиши незгоду зі стейкхолдером щодо даних або метрик.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: validated first, found mismatch type, aligned on definitions, created source of truth' },
-  { id:26, type:'behavioral', level:'junior', en:'Tell me about a time you had to explain a complex analysis to a non-technical audience.', uk:'Розкажи як пояснював складний аналіз нетехнічній аудиторії.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Adapted communication level, used visuals, focused on business impact not methodology' },
-  { id:27, type:'behavioral', level:'middle', en:'Tell me about your greatest impact on a business metric.', uk:'Розкажи про найбільший вплив на бізнес-метрику.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Be specific: what metric, by how much, over what timeframe' },
-  { id:28, type:'behavioral', level:'middle', en:'Describe a time you had to work with incomplete or messy data. What did you do?', uk:'Опиши ситуацію з неповними або брудними даними. Що робив?', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: validated assumptions, documented limitations, communicated uncertainty to stakeholders' },
-  { id:29, type:'behavioral', level:'middle', en:'Tell me about a project where you had to balance speed vs accuracy in your analysis.', uk:'Проект де треба було балансувати швидкість і точність аналізу.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show decision-making: context of urgency, what you traded off, what you communicated' },
-  { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
+  { id:2, type:'product', level:'junior', en:'Revenue dropped 18% week-over-week. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% тиждень до тижня. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Revenue = Traffic × Conversion × AOV. Traffic is stable → focus on CR and AOV' },
+  { id:3, type:'behavioral', level:'junior', en:'Tell me about a time you made a mistake in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: identified root cause → fixed process → prevented recurrence' }
 ];
 
-// ─── STATE ────────────────────────────────────────────────────────────────────
 let state = {
-
   lang: 'en',
   level: 'all',
   category: 'all',
@@ -439,20 +362,54 @@ let state = {
   recognition: null,
 };
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ─── UI NAVIGATION FUNCTIONS ───
+function showStart() {
+  document.getElementById('start-screen').style.display = 'flex';
+  document.getElementById('session-screen').style.display = 'none';
+}
+
+function startSession() {
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('session-screen').style.display = 'flex';
+  loadQuestion();
+}
+
+function selectCat(cat) {
+  document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
+  const card = document.getElementById('cat-' + cat);
+  if(card) card.classList.add('selected');
+  state.category = cat;
+}
+
+function setCategory(cat) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const item = document.getElementById('nav-' + cat);
+  if(item) item.classList.add('active');
+  state.category = cat;
+  if(document.getElementById('session-screen').style.display === 'flex') {
+    loadQuestion();
+  }
+}
+
+function setLang(lang) {
+  state.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  if (state.currentQ) renderQuestion();
+}
+
+function onLevelChange() {
+  state.level = document.getElementById('level-select').value;
+  loadQuestion();
+}
+
 function init() {
   updateCounts();
   updateStats();
   showStart();
 }
 
-function showApiKeyScreen() {
-  document.getElementById('apikey-screen').style.display = 'flex';
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('session-screen').style.display = 'none';
-}
-
-// ─── QUESTIONS ────────────────────────────────────────────────────────────────
+// ─── LOGIC FUNCTIONS ───
 function getFilteredQuestions() {
   return QUESTIONS.filter(q => {
     if (state.category === 'junior') return q.level === 'junior';
@@ -506,17 +463,6 @@ function renderFramework(q) {
   });
 }
 
-function highlightFrameworkStep(stepIndex) {
-  if (!state.currentQ) return;
-  state.currentQ.steps.forEach((_, i) => {
-    const el = document.getElementById('fw-step-' + i);
-    if (!el) return;
-    if (i < stepIndex) el.className = 'fw-step done';
-    else if (i === stepIndex) el.className = 'fw-step active';
-    else el.className = 'fw-step';
-  });
-}
-
 function nextQuestion() {
   loadQuestion();
 }
@@ -536,100 +482,22 @@ function resetFeedback() {
 function updateCounts() {
   const types = ['sql','product','behavioral'];
   types.forEach(t => {
-    document.getElementById('cnt-' + t).textContent = QUESTIONS.filter(q => q.type === t).length;
+    const el = document.getElementById('cnt-' + t);
+    if(el) el.textContent = QUESTIONS.filter(q => q.type === t).length;
   });
-  document.getElementById('cnt-all').textContent = QUESTIONS.length;
+  const elAll = document.getElementById('cnt-all');
+  if(elAll) elAll.textContent = QUESTIONS.length;
 }
 
-// ─── VOICE ────────────────────────────────────────────────────────────────────
-function toggleMic() {
-  if (state.isRecording) {
-    stopRecording();
-  } else {
-    startRecording();
-  }
-}
-
-function startRecording() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    alert('Speech recognition is only supported in Chrome. Please use Chrome or type your answer.');
-    return;
-  }
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const recognition = new SpeechRecognition();
-  recognition.continuous = true;
-  recognition.interimResults = true;
-  recognition.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
-  state.recognition = recognition;
-
-  const transcript = document.getElementById('transcript');
-  transcript.innerHTML = '<span class="recording-indicator"><span class="rec-dot"></span>Recording...</span>';
-  
-  let finalTranscript = '';
-  let stepIndex = 0;
-
-  recognition.onresult = (event) => {
-    let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript + ' ';
-        // advance framework step heuristically
-        const lowerT = finalTranscript.toLowerCase();
-        const q = state.currentQ;
-        if (q && stepIndex < q.steps.length - 1) {
-          const stepKeywords = [['validate','check','data issue','real','tracking'], ['decompose','break','revenue','traffic','conversion'], ['segment','device','channel','country','cohort'], ['hypothesis','suspect','likely','driver'], ['validate','confirm','check if','test']];
-          const idx = Math.min(stepIndex + 1, stepKeywords.length - 1);
-          if (stepKeywords[idx] && stepKeywords[idx].some(k => lowerT.includes(k))) {
-            stepIndex++;
-            highlightFrameworkStep(stepIndex);
-          }
-        }
-      } else {
-        interim += event.results[i][0].transcript;
-      }
-    }
-    state.currentTranscript = finalTranscript;
-    transcript.innerHTML = `<span class="recording-indicator"><span class="rec-dot"></span>Recording...</span><br><br>${finalTranscript}<span style="color:var(--text3)">${interim}</span>`;
-  };
-
-  recognition.onerror = (e) => {
-    console.error('Speech error:', e.error);
-    stopRecording();
-  };
-  recognition.onend = () => { if (state.isRecording) stopRecording(); };
-
-  recognition.start();
-  state.isRecording = true;
-  const btn = document.getElementById('mic-btn');
-  btn.classList.add('recording');
-  btn.textContent = '⏹';
-  highlightFrameworkStep(0);
-}
-
-function stopRecording() {
-  if (state.recognition) {
-    state.recognition.stop();
-    state.recognition = null;
-  }
-  state.isRecording = false;
-  const btn = document.getElementById('mic-btn');
-  btn.classList.remove('recording');
-  btn.textContent = '🎙';
-  if (state.currentTranscript.trim()) {
-    document.getElementById('answer-input').value = state.currentTranscript.trim();
-  }
-}
-
-// ─── SUBMIT ───────────────────────────────────────────────────────────────────
+// ─── API AND SUBMIT ───
 async function submitAnswer() {
   const answer = document.getElementById('answer-input').value.trim() || state.currentTranscript.trim();
-  if (!answer) { alert('Please provide an answer first — use the mic or type below.'); return; }
+  if (!answer) { alert('Please provide an answer first.'); return; }
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
 
-  // Show answer in transcript
   if (!state.currentTranscript) {
     document.getElementById('transcript').innerHTML = answer;
   }
@@ -640,38 +508,33 @@ async function submitAnswer() {
     saveFeedbackToHistory(feedback, answer);
   } catch (err) {
     console.error(err);
-    displayFeedback({ structure: 0, business: 0, terminology: 0, closesLoop: false, good: 'Could not connect to Gemini. Check your API key in sidebar.', missing: err.message, totalScore: 0 }, answer);
+    displayFeedback({ structure: 0, business: 0, terminology: 0, closesLoop: false, good: 'Could not connect to Gemini.', missing: err.message, totalScore: 0 }, answer);
   }
 
   btn.disabled = false;
   btn.textContent = 'Evaluate →';
 }
 
-// ─── GEMINI API ───────────────────────────────────────────────────────────────
 async function getGeminiFeedback(q, answer, lang) {
   const qText = q[lang] || q.en;
   const framework = q.framework;
   const steps = q.steps.join(' → ');
 
-  const systemPrompt = `You are an expert interviewer for Revenue Analyst, Product Analyst, and Data Analyst roles at European tech companies. You give concise, actionable feedback.
-
-The candidate is practicing interview answers. Evaluate their response strictly but fairly.
-
+  const systemPrompt = `You are an expert interviewer. 
 Question type: ${q.type}
 Framework expected: ${framework} (${steps})
 Question: "${qText}"
 Candidate answer: "${answer}"
 
-Return ONLY valid JSON, no markdown, no explanation outside JSON:
+Return ONLY valid JSON:
 {
-  "structure": <0-10, how well they structured their answer>,
-  "business": <0-10, business logic and domain knowledge>,
-  "terminology": <0-10, correct use of analyst terms>,
-  "closesLoop": <true/false, did they end with a concrete action/recommendation>,
-  "totalScore": <0-10, weighted overall>,
-  "good": "<1-2 sentences: what they did well. Be specific.>",
-  "missing": "<1-2 sentences: what was missing or weak. Be specific with examples of what they should have said.>",
-  "betterPhrase": "<one example sentence that would make their answer stronger, formatted as a quote>"
+  "structure": 8,
+  "business": 7,
+  "terminology": 9,
+  "closesLoop": true,
+  "totalScore": 8,
+  "good": "What they did well.",
+  "missing": "What was missing."
 }`;
 
   const url = '/api/feedback';
@@ -696,7 +559,6 @@ Return ONLY valid JSON, no markdown, no explanation outside JSON:
   return JSON.parse(cleaned);
 }
 
-// ─── FEEDBACK DISPLAY ────────────────────────────────────────────────────────
 function displayFeedback(fb, answer) {
   const wrap = document.getElementById('feedback-wrap');
   wrap.classList.add('visible');
@@ -705,107 +567,31 @@ function displayFeedback(fb, answer) {
   const getClass = v => v >= 8 ? 'good' : v >= 6 ? 'mid' : 'low';
 
   scores.innerHTML = `
-    <div class="score-cell">
-      <div class="score-label">Structure</div>
-      <div class="score-val ${getClass(fb.structure)}">${fb.structure}/10</div>
-    </div>
-    <div class="score-cell">
-      <div class="score-label">Business logic</div>
-      <div class="score-val ${getClass(fb.business)}">${fb.business}/10</div>
-    </div>
-    <div class="score-cell">
-      <div class="score-label">Terminology</div>
-      <div class="score-val ${getClass(fb.terminology)}">${fb.terminology}/10</div>
-    </div>
-    <div class="score-cell">
-      <div class="score-label">Closes loop</div>
-      <div class="score-val ${fb.closesLoop ? 'good' : 'low'}">${fb.closesLoop ? '✓ Yes' : '✗ No'}</div>
-    </div>
+    <div class="score-cell"><div class="score-label">Structure</div><div class="score-val ${getClass(fb.structure)}">${fb.structure}/10</div></div>
+    <div class="score-cell"><div class="score-label">Business logic</div><div class="score-val ${getClass(fb.business)}">${fb.business}/10</div></div>
+    <div class="score-cell"><div class="score-label">Terminology</div><div class="score-val ${getClass(fb.terminology)}">${fb.terminology}/10</div></div>
+    <div class="score-cell"><div class="score-label">Closes loop</div><div class="score-val ${fb.closesLoop ? 'good' : 'low'}">${fb.closesLoop ? '✓ Yes' : '✗ No'}</div></div>
   `;
 
-  const body = document.getElementById('feedback-body');
-  body.innerHTML = `
+  document.getElementById('feedback-body').innerHTML = `
     <div style="margin-bottom:8px"><strong>✓ Good:</strong> ${fb.good}</div>
     <div style="margin-bottom:8px"><strong>△ Missing:</strong> ${fb.missing}</div>
-    ${fb.betterPhrase ? `<div style="padding:8px 10px; background:var(--accent-soft); border-radius:var(--radius-sm); font-size:12px; color:var(--accent)"><strong>Better phrasing:</strong> "${fb.betterPhrase}"</div>` : ''}
   `;
-
-  // Text-to-speech feedback
-  if (window.speechSynthesis && fb.good) {
-    const text = `Score: ${fb.totalScore} out of 10. ${fb.good} ${fb.missing}`;
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 1.1;
-    utter.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
-    setTimeout(() => window.speechSynthesis.speak(utter), 300);
-  }
-
-  // Mark framework steps as done
-  if (state.currentQ) {
-    state.currentQ.steps.forEach((_, i) => {
-      const el = document.getElementById('fw-step-' + i);
-      if (el) el.className = fb.totalScore >= 7 ? 'fw-step done' : 'fw-step';
-    });
-  }
-
-  // scroll to feedback
   wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// ─── HISTORY ──────────────────────────────────────────────────────────────────
 function saveFeedbackToHistory(fb, answer) {
-  if (!state.currentQ) return;
-
-  // update stats
   state.stats.done++;
   state.stats.totalScore += fb.totalScore || 0;
-  if (fb.totalScore >= 7) state.stats.streak++;
-  else state.stats.streak = 0;
+  if (fb.totalScore >= 7) state.stats.streak++; else state.stats.streak = 0;
   localStorage.setItem('interview_stats', JSON.stringify(state.stats));
   updateStats();
-
-  // save attempt
-  const attempt = {
-    qId: state.currentQ.id,
-    qText: state.currentQ[state.lang] || state.currentQ.en,
-    type: state.currentQ.type,
-    score: fb.totalScore,
-    answer: answer.substring(0, 200),
-    date: Date.now()
-  };
-  state.sessionHistory.unshift(attempt);
-  if (state.sessionHistory.length > 50) state.sessionHistory.pop();
-  localStorage.setItem('session_history', JSON.stringify(state.sessionHistory));
-  updateHistoryPanel();
-}
-
-function updateHistoryPanel() {
-  const qId = state.currentQ?.id;
-  const attempts = state.sessionHistory.filter(a => a.qId === qId);
-  if (!attempts.length) return;
-  const panel = document.getElementById('history-panel');
-  panel.classList.add('visible');
-  const list = document.getElementById('history-list');
-  list.innerHTML = attempts.slice(0, 5).map(a => `
-    <div class="history-item">
-      <span class="hist-badge q-badge ${a.type}">${a.type}</span>
-      <span class="hist-q">${a.answer}...</span>
-      <span class="hist-score" style="color:${a.score>=7?'var(--green)':a.score>=5?'var(--amber)':'var(--red)'}">
-        ${a.score}/10
-      </span>
-    </div>
-  `).join('');
 }
 
 function updateStats() {
   document.getElementById('stat-done').textContent = state.stats.done;
-  const avg = state.stats.done > 0 ? (state.stats.totalScore / state.stats.done).toFixed(1) : '—';
-  document.getElementById('stat-avg').textContent = avg;
+  document.getElementById('stat-avg').textContent = state.stats.done > 0 ? (state.stats.totalScore / state.stats.done).toFixed(1) : '—';
   document.getElementById('stat-streak').textContent = state.stats.streak + '🔥';
-  const total = QUESTIONS.length;
-  const pct = Math.min(100, Math.round((state.stats.done / total) * 100));
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-label-left').textContent = state.stats.done + ' done';
-  document.getElementById('progress-label-right').textContent = total + ' total';
 }
 
 function resetProgress() {
@@ -817,7 +603,6 @@ function resetProgress() {
   updateStats();
 }
 
-// ─── INPUT HELPERS ────────────────────────────────────────────────────────────
 function autoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
@@ -830,7 +615,6 @@ function handleEnter(e) {
   }
 }
 
-// ─── BOOT ─────────────────────────────────────────────────────────────────────
 init();
 </script>
 </body>
