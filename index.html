@@ -123,7 +123,51 @@ function onLevelChange() {
   state.level = document.getElementById('level-select').value;
   loadQuestion();
 }
+function startRecording() {
+  // 1. Проверяем наличие API
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Speech recognition is not supported in this browser.');
+    return;
+  }
+  
+  // 2. Инициализация
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
+  state.recognition = recognition;
 
+  const transcriptEl = document.getElementById('transcript');
+  transcriptEl.innerHTML = '<span class="recording-indicator"><span class="rec-dot"></span>Recording...</span>';
+  
+  // 3. События
+  recognition.onresult = (event) => {
+    let finalTranscript = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript + ' ';
+    }
+    if (finalTranscript) {
+      state.currentTranscript = finalTranscript;
+      transcriptEl.innerHTML = finalTranscript; // Показываем текст
+      document.getElementById('answer-input').value = finalTranscript; // Вставляем в поле
+    }
+  };
+
+  recognition.onstart = () => {
+    state.isRecording = true;
+    document.getElementById('mic-btn').classList.add('recording');
+    document.getElementById('mic-btn').textContent = '⏹';
+  };
+
+  recognition.onend = () => {
+    state.isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+    document.getElementById('mic-btn').textContent = '🎙';
+  };
+
+  recognition.start();
+}
 function updateCounts() {
   ['all','sql','product','behavioral'].forEach(c => {
     const count = c === 'all' ? QUESTIONS.length : QUESTIONS.filter(q => q.type === c).length;
