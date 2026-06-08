@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interview Trainer</title>
+<title>Interview Trainer — Revenue · Product · Data</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -15,19 +15,24 @@
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; overflow: hidden; }
   .layout { display: grid; grid-template-columns: 240px 1fr; height: 100vh; }
   .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
-  .nav-item { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text2); transition: 0.15s; }
+  .nav-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin: 15px 0 8px 10px; }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text2); transition: 0.15s; margin-bottom: 2px; }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
   .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+  
   .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  
+  .topbar { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); gap: 10px; }
   .session { flex: 1; overflow-y: auto; padding-bottom: 20px; }
   
-  /* Дизайн карточек как на скриншоте */
   .feedback-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
   .score-card { background: var(--bg3); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
-  .score-label { font-size: 10px; color: var(--text3); text-transform: uppercase; margin-bottom: 5px; }
-  .score-val { font-size: 18px; font-weight: 700; color: var(--text); }
+  .score-label { font-size: 10px; color: var(--text3); text-transform: uppercase; }
+  .score-val { font-size: 16px; font-weight: 700; color: var(--text); }
   
   .q-card { margin: 16px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-  .fw-steps { display: flex; gap: 8px; margin-top: 15px; }
+  .fw-steps { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
   .fw-step { font-size: 11px; padding: 4px 12px; border-radius: 20px; background: var(--bg3); border: 1px solid var(--border); color: var(--text3); }
   .fw-step.done { background: var(--green-soft); color: var(--green); border-color: var(--green); }
 
@@ -38,18 +43,18 @@
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(248, 113, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } }
   textarea { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: #fff; resize: none; }
   .submit-btn { background: var(--accent); color: #fff; border: none; padding: 0 20px; border-radius: 6px; font-weight: 600; cursor: pointer; }
-  
-  .start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 </style>
 </head>
 <body>
 
 <div class="layout">
   <div class="sidebar">
-    <h2 style="margin-bottom:20px; font-size:16px;">Interview Trainer</h2>
+    <h2 style="font-size:14px; padding-left:10px;">Interview Trainer</h2>
+    <div class="nav-label">Practice</div>
     <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All Questions</div>
     <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL / Python</div>
     <div class="nav-item" onclick="setCategory('product')" id="nav-product">💡 Product Cases</div>
+    <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">🎯 Behavioral</div>
   </div>
 
   <div class="main">
@@ -58,26 +63,31 @@
       <button class="submit-btn" onclick="startSession()" style="height:50px; margin-top:20px;">Start Session →</button>
     </div>
 
+    <div class="topbar">
+      <div id="session-title" style="font-weight:600;">Session</div>
+      <div style="flex:1"></div>
+      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer;">✕ End</button>
+    </div>
+
     <div class="session">
       <div class="q-card">
         <div id="q-text" style="font-size:18px; font-weight:600;">Loading...</div>
         <div class="fw-steps" id="fw-steps"></div>
         
-        <!-- Сетка оценок -->
         <div class="feedback-grid" id="feedback-grid" style="display:none;">
           <div class="score-card"><div class="score-label">Structure</div><div class="score-val" id="s-struct">0/10</div></div>
           <div class="score-card"><div class="score-label">Business</div><div class="score-val" id="s-biz">0/10</div></div>
           <div class="score-card"><div class="score-label">Terms</div><div class="score-val" id="s-term">0/10</div></div>
-          <div class="score-card"><div class="score-label">Closes Loop</div><div class="score-val" id="s-loop">No</div></div>
+          <div class="score-card"><div class="score-label">Loop</div><div class="score-val" id="s-loop">No</div></div>
         </div>
 
-        <div id="feedback-text" style="margin-top:20px; font-size:13px; display:none;">
+        <div id="feedback-text" style="margin-top:20px; font-size:13px; display:none; background:rgba(255,255,255,0.03); padding:15px; border-radius:8px;">
           <p id="fb-good"></p>
           <p id="fb-missing" style="margin-top:10px;"></p>
         </div>
       </div>
 
-      <div class="transcript" id="transcript">Transcript...</div>
+      <div class="transcript" id="transcript">Your transcript...</div>
     </div>
 
     <div class="controls">
@@ -103,7 +113,7 @@ const QUESTIONS = [
   { id:10, type:'sql', level:'middle', en:'Design a cohort retention table in Python with pandas. What steps would you follow?', uk:'Побудуй cohort retention таблицю в Python з pandas. Які кроки?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'Steps: parse dates → assign cohort_month → pivot table → divide by cohort size' },
   { id:11, type:'sql', level:'middle', en:'Explain how you would run an A/B test analysis in Python. What statistical test and why?', uk:'Як провести A/B тест аналіз у Python? Який статистичний тест і чому?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'t-test for means, chi-square for proportions — state your H0 and significance level' },
   { id:12, type:'sql', level:'junior', en:'You need to analyze revenue by device type and country. Walk through your Python/SQL approach.', uk:'Аналіз доходу по типу пристрою та країні. Поясни підхід Python/SQL.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'GROUP BY device, country — think about NULL handling and sorting' },
- 
+
   // PRODUCT CASES
   { id:13, type:'product', level:'junior', en:'Revenue dropped 18% week-over-week. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% тиждень до тижня. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Revenue = Traffic × Conversion × AOV. Traffic is stable → focus on CR and AOV' },
   { id:14, type:'product', level:'junior', en:'Conversion rate dropped from 5% to 3.8%. No product releases reported. What do you do?', uk:'Конверсія впала з 5% до 3.8%. Релізів не було. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, browser, country, acquisition channel. Check error logs.' },
@@ -116,7 +126,7 @@ const QUESTIONS = [
   { id:20, type:'product', level:'middle', en:'MRR is stable but engagement metrics are declining. Is this a problem?', uk:'MRR стабільний але engagement падає. Це проблема?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'MRR is a lagging indicator. Engagement is a leading indicator of future churn.' },
   { id:21, type:'product', level:'middle', en:'How would you measure the success of a new onboarding flow?', uk:'Як виміряєш успішність нового onboarding flow?', framework:'Metrics Framework', steps:['Clarify goal','Primary metric','Feature metrics','Guardrail metrics','Decision'], hint:'Goal → Primary metric → Feature adoption → Guardrail (churn, NPS)' },
   { id:22, type:'product', level:'middle', en:'How would you increase revenue by 20% in the next quarter? What levers would you pull?', uk:'Як збільшити дохід на 20% за наступний квартал? Які важелі?', framework:'MECE Revenue', steps:['Acquisition','Retention','Expansion','Prioritize','Recommend'], hint:'Revenue = Acquisition + Retention + Expansion. Which has highest ROI?' },
- 
+
   // BEHAVIORAL
   { id:23, type:'behavioral', level:'junior', en:'Tell me about a time you made a mistake in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: identified root cause → fixed process → prevented recurrence' },
   { id:24, type:'behavioral', level:'junior', en:'Tell me about a time when your analysis changed a business decision.', uk:'Розкажи коли твій аналіз змінив бізнес-рішення.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Quantify the impact. What was the decision before vs after your analysis?' },
@@ -129,7 +139,16 @@ const QUESTIONS = [
 ];
 
 
-let state = { lang: 'en', category: 'all', currentQ: null, isRecording: false, recognition: null };
+let state = { category: 'all', currentQ: null, isRecording: false, recognition: null };
+
+window.setCategory = function(cat) {
+  state.category = cat;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + cat).classList.add('active');
+  if(document.getElementById('start-screen').style.display === 'none') {
+    loadQuestion();
+  }
+};
 
 window.startSession = function() {
   document.getElementById('start-screen').style.display = 'none';
@@ -137,8 +156,12 @@ window.startSession = function() {
 };
 
 function loadQuestion() {
-  state.currentQ = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
+  if (pool.length === 0) return;
+  
+  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
   document.getElementById('q-text').textContent = state.currentQ.en;
+  document.getElementById('session-title').textContent = state.currentQ.type.toUpperCase();
   
   const stepsBox = document.getElementById('fw-steps');
   stepsBox.innerHTML = '';
@@ -148,11 +171,17 @@ function loadQuestion() {
   
   document.getElementById('feedback-grid').style.display = 'none';
   document.getElementById('feedback-text').style.display = 'none';
+  document.getElementById('answer-input').value = "";
+  document.getElementById('transcript').textContent = "Listening...";
 }
 
 window.toggleMic = function() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (state.isRecording) { state.recognition.stop(); } else {
+  if (!SpeechRecognition) return alert("Use Chrome/Edge");
+
+  if (state.isRecording) {
+    state.recognition.stop();
+  } else {
     state.recognition = new SpeechRecognition();
     state.recognition.continuous = true;
     state.recognition.interimResults = true;
@@ -169,33 +198,42 @@ window.toggleMic = function() {
 
 window.submitAnswer = async function() {
   const btn = document.getElementById('submit-btn');
+  const answer = document.getElementById('answer-input').value;
+  if(!answer) return alert("Please say or type something");
+  
   btn.disabled = true;
-  
-  const res = await fetch('/api/feedback', {
-    method: 'POST',
-    body: JSON.stringify({ contents: [{ parts: [{ text: `Q: ${state.currentQ.en} Ans: ${document.getElementById('answer-input').value}` }] }] })
-  });
-  
-  const fb = await res.json();
-  
-  // Заполняем карточки
-  document.getElementById('s-struct').textContent = fb.structure + '/10';
-  document.getElementById('s-biz').textContent = fb.business + '/10';
-  document.getElementById('s-term').textContent = fb.terminology + '/10';
-  document.getElementById('s-loop').textContent = fb.closesLoop;
-  
-  document.getElementById('fb-good').innerHTML = `<b>Good:</b> ${fb.good}`;
-  document.getElementById('fb-missing').innerHTML = `<b>Missing:</b> ${fb.missing}`;
-  
-  // Подсвечиваем шаги
-  fb.completedSteps.forEach(s => {
-    const el = document.getElementById('step-' + s);
-    if(el) el.classList.add('done');
-  });
+  btn.textContent = "Analyzing...";
 
-  document.getElementById('feedback-grid').style.display = 'grid';
-  document.getElementById('feedback-text').style.display = 'block';
-  btn.disabled = false;
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      body: JSON.stringify({ contents: [{ parts: [{ text: `Evaluate this ${state.currentQ.type} answer: "${answer}" for question: "${state.currentQ.en}"` }] }] })
+    });
+    const fb = await res.json();
+    
+    document.getElementById('s-struct').textContent = fb.structure + '/10';
+    document.getElementById('s-biz').textContent = fb.business + '/10';
+    document.getElementById('s-term').textContent = fb.terminology + '/10';
+    document.getElementById('s-loop').textContent = fb.closesLoop;
+    
+    document.getElementById('fb-good').innerHTML = `<b>✓ Good:</b> ${fb.good}`;
+    document.getElementById('fb-missing').innerHTML = `<b>△ Missing:</b> ${fb.missing}`;
+    
+    if(fb.completedSteps) {
+      fb.completedSteps.forEach(s => {
+        const el = document.getElementById('step-' + s);
+        if(el) el.classList.add('done');
+      });
+    }
+
+    document.getElementById('feedback-grid').style.display = 'grid';
+    document.getElementById('feedback-text').style.display = 'block';
+  } catch (e) {
+    alert("Error connecting to AI");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Evaluate →";
+  }
 };
 </script>
 </body>
