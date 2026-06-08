@@ -6,122 +6,134 @@
 <title>Interview Trainer — Revenue · Product · Data</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --bg: #0f0f10; --bg2: #18181b; --bg3: #222226; --border: rgba(255,255,255,0.08); --text: #f0efe8; --text2: #9b9a95; --text3: #5a5a56; --accent: #7c6af7; --accent-soft: rgba(124,106,247,0.15); --green: #4ade80; --green-soft: rgba(74,222,128,0.12); --amber: #f59e0b; --red: #f87171; --radius: 10px; --radius-sm: 6px; }
+  :root {
+    --bg: #0f0f10; --bg2: #18181b; --bg3: #222226; --border: rgba(255,255,255,0.08);
+    --text: #f0efe8; --text2: #9b9a95; --text3: #5a5a56; --accent: #7c6af7;
+    --accent-soft: rgba(124,106,247,0.15); --green: #4ade80; --green-soft: rgba(74,222,128,0.12);
+    --amber: #f59e0b; --red: #f87171; --radius: 10px; --radius-sm: 6px;
+  }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; overflow: hidden; }
   .layout { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
   .sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
-  .nav-section { padding: 12px 10px 0; }
-  .nav-item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text2); }
+  .nav-section { padding: 12px 10px; }
+  .nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text2); transition: 0.15s; }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
   .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+  .nav-count { margin-left: auto; font-size: 10px; background: var(--bg3); padding: 1px 6px; border-radius: 10px; }
   .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
-  .topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); }
-  .session { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-  .q-card { margin: 16px 20px 0; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
-  .transcript-wrap { margin: 10px 20px 0; flex: 1; min-height: 100px; }
-  .transcript { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; min-height: 80px; color: var(--text2); }
-  .controls { padding: 12px 20px 16px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; align-items: flex-end; gap: 10px; }
-  .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; }
-  .mic-btn.recording { background: rgba(248, 113, 113, 0.2); border: 1px solid var(--red); color: var(--red); }
-  .answer-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: white; resize: none; }
-  .submit-btn { padding: 10px 20px; background: var(--accent); border: none; color: white; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; }
-  .feedback-wrap { margin: 10px 20px; display: none; }
-  .feedback-wrap.visible { display: block; }
-  .start-screen { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; text-align: center; }
-  .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+  .start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+  .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; width: 100%; max-width: 500px; }
   .cat-card { background: var(--bg2); border: 1px solid var(--border); padding: 15px; border-radius: var(--radius); cursor: pointer; }
   .cat-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .topbar { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+  .session { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding-bottom: 20px; }
+  .q-card { margin: 16px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .q-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; background: var(--accent-soft); color: var(--accent); }
+  .transcript-wrap { margin: 0 20px; flex: 1; }
+  .transcript { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; min-height: 100px; color: var(--text2); font-style: italic; }
+  .feedback-wrap { margin: 16px 20px; display: none; }
+  .feedback-wrap.visible { display: block; }
+  .feedback-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; }
+  .controls { padding: 15px 20px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; align-items: flex-end; }
+  .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: 0.2s; }
+  .mic-btn.recording { background: rgba(248, 113, 113, 0.2); color: var(--red); border: 1px solid var(--red); box-shadow: 0 0 15px rgba(248,113,113,0.3); }
+  .answer-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; color: #fff; resize: none; font-family: inherit; }
+  .submit-btn { background: var(--accent); color: #fff; border: none; padding: 0 25px; height: 44px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
+  .submit-btn:disabled { opacity: 0.5; }
 </style>
 </head>
 <body>
 
 <div class="layout">
   <div class="sidebar">
-    <div style="padding: 20px; font-weight: 700;">INTERVIEW TRAINER</div>
+    <div style="padding: 20px; font-weight: 800; letter-spacing: 1px;">INTERVIEW TRAINER</div>
     <div class="nav-section">
-      <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All questions <span style="margin-left:auto" id="cnt-all">0</span></div>
-      <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL / Python <span style="margin-left:auto" id="cnt-sql">0</span></div>
-      <div class="nav-item" onclick="setCategory('product')" id="nav-product">💡 Product cases <span style="margin-left:auto" id="cnt-product">0</span></div>
-      <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">🎯 Behavioral <span style="margin-left:auto" id="cnt-behavioral">0</span></div>
+      <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All questions <span class="nav-count" id="cnt-all">0</span></div>
+      <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL / Python <span class="nav-count" id="cnt-sql">0</span></div>
+      <div class="nav-item" onclick="setCategory('product')" id="nav-product">💡 Product cases <span class="nav-count" id="cnt-product">0</span></div>
+      <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">🎯 Behavioral <span class="nav-count" id="cnt-behavioral">0</span></div>
     </div>
   </div>
 
   <div class="main">
     <!-- START SCREEN -->
     <div id="start-screen" class="start-screen">
-      <div style="font-size: 40px;">🎙</div>
-      <h2>Ready to practice?</h2>
+      <div style="font-size: 50px; margin-bottom: 10px;">🎙</div>
+      <h1 style="margin-bottom: 10px;">Ready to practice?</h1>
+      <p style="color: var(--text2); margin-bottom: 20px;">Choose a category and start your mock interview.</p>
       <div class="category-grid">
-        <div class="cat-card selected" id="cat-all" onclick="selectCat('all')">All</div>
-        <div class="cat-card" id="cat-sql" onclick="selectCat('sql')">SQL</div>
-        <div class="cat-card" id="cat-product" onclick="selectCat('product')">Product</div>
+        <div class="cat-card selected" id="cat-all" onclick="selectCat('all')">All Questions</div>
+        <div class="cat-card" id="cat-sql" onclick="selectCat('sql')">SQL / Data</div>
+        <div class="cat-card" id="cat-product" onclick="selectCat('product')">Product Case</div>
       </div>
-      <button class="submit-btn" onclick="startSession()" style="padding: 15px 40px;">Start session →</button>
+      <button class="submit-btn" onclick="startSession()" style="height: 55px; padding: 0 50px; font-size: 16px;">Start Session →</button>
     </div>
 
-    <!-- SESSION AREA -->
+    <!-- SESSION UI -->
     <div class="topbar">
-      <div id="session-title">Session</div>
+      <div id="session-title" style="font-weight: 600;">Session</div>
       <div style="flex:1"></div>
-      <button onclick="showStart()" style="background:none; border:none; color:var(--text3); cursor:pointer;">✕ End</button>
+      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer;">✕ End</button>
     </div>
 
     <div class="session">
       <div class="q-card">
-        <div id="q-text" style="font-size:16px; font-weight:500;">Loading question...</div>
-        <div id="q-hint" style="margin-top:10px; color:var(--text3); font-size:12px;"></div>
+        <span class="q-badge" id="q-badge">SQL</span>
+        <div id="q-text" style="font-size: 18px; font-weight: 500;">Loading...</div>
+        <div id="q-hint" style="margin-top: 15px; font-size: 12px; color: var(--text3); background: var(--bg3); padding: 10px; border-radius: 5px;"></div>
       </div>
 
       <div class="transcript-wrap">
-        <div class="transcript" id="transcript">Press 🎙 to answer by voice, or type below...</div>
+        <div id="transcript" class="transcript">Your transcript will appear here when you speak...</div>
       </div>
 
       <div id="feedback-wrap" class="feedback-wrap">
-        <div id="feedback-body" style="background:var(--bg2); padding:15px; border-radius:10px; border:1px solid var(--border);"></div>
+        <div class="feedback-card">
+          <div style="font-weight: 600; margin-bottom: 10px; color: var(--accent);">AI FEEDBACK:</div>
+          <div id="feedback-body" style="white-space: pre-wrap; font-size: 13px; color: var(--text2);"></div>
+        </div>
       </div>
     </div>
 
     <div class="controls">
       <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</div>
-      <textarea class="answer-input" id="answer-input" placeholder="Type your answer here..." rows="1"></textarea>
-      <button class="submit-btn" id="submit-btn" onclick="submitAnswer()">Evaluate →</button>
+      <textarea id="answer-input" class="answer-input" placeholder="Type your answer or use the mic..." rows="1"></textarea>
+      <button id="submit-btn" class="submit-btn" onclick="submitAnswer()">Evaluate →</button>
     </div>
   </div>
 </div>
 
 <script>
-// 1. DATA
+// 1. QUESTIONS DATA
 const QUESTIONS = [
-  { id:1, type:'sql', en:'Find the 7-day conversion rate for users.', hint:'Define grain — user-level or order-level?' },
-  { id:2, type:'product', en:'Revenue dropped 18% week-over-week. Investigate.', hint:'Revenue = Traffic × Conversion × AOV' },
-  { id:3, type:'behavioral', en:'Tell me about a time you made a mistake.', hint:'Use STAR method' },
-  { id:4, type:'sql', en:'Calculate average order value per user.', hint:'SUM(revenue) / COUNT(orders)' },
-  { id:5, type:'product', en:'Conversion rate dropped from 5% to 3.8%. What do you do?', hint:'Segment by device, browser, country' }
+  { id:1, type:'sql', en:'Find the 7-day conversion rate for users. Explain logic.', hint:'Define grain — user or order level?' },
+  { id:2, type:'sql', en:'Calculate average order value per user for the last 30 days.', hint:'SUM(revenue) / COUNT(orders)' },
+  { id:3, type:'sql', en:'Write a funnel analysis: signup → login → first purchase.', hint:'COUNT DISTINCT users at each step' },
+  { id:4, type:'sql', en:'Find Day-7 retention. What tables do you need?', hint:'Cohort logic: MIN(event_date) per user' },
+  { id:5, type:'sql', en:'Users who made a second purchase within 30 days.', hint:'ROW_NUMBER() or LAG function' },
+  { id:13, type:'product', en:'Revenue dropped 18% week-over-week. Traffic is stable. Investigate.', hint:'Revenue = Traffic × Conversion × AOV' },
+  { id:14, type:'product', en:'Conversion rate dropped from 5% to 3.8%. No releases.', hint:'Segment by device, browser, country' },
+  { id:15, type:'product', en:'Traffic increased 30% but revenue stayed flat. Why?', hint:'Check traffic quality and AOV' },
+  { id:23, type:'behavioral', en:'Tell me about a time you made a mistake in analysis.', hint:'Show root cause → fix → prevention' },
+  { id:24, type:'behavioral', en:'Tell me about a time when your analysis changed a decision.', hint:'Quantify the business impact' },
+  { id:25, type:'behavioral', en:'Describe a disagreement with a stakeholder about data.', hint:'Align on definitions first' }
 ];
 
-// 2. STATE
+// 2. APP STATE
 let state = {
   category: 'all',
   currentQ: null,
   isRecording: false,
   recognition: null,
-  lang: 'en'
+  transcript: ""
 };
 
-// 3. NAVIGATION FUNCTIONS (Глобальные)
-window.showStart = function() {
-  document.getElementById('start-screen').style.display = 'flex';
-};
-
-window.startSession = function() {
-  document.getElementById('start-screen').style.display = 'none';
-  loadQuestion();
-};
-
+// 3. GLOBAL FUNCTIONS (Attached to window for onclick)
 window.setCategory = function(cat) {
   state.category = cat;
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-' + cat).classList.add('active');
-  loadQuestion();
+  if(document.getElementById('start-screen').style.display === 'none') loadQuestion();
 };
 
 window.selectCat = function(cat) {
@@ -130,48 +142,56 @@ window.selectCat = function(cat) {
   document.getElementById('cat-' + cat).classList.add('selected');
 };
 
-// 4. LOGIC
-function loadQuestion() {
-  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
-  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
-  document.getElementById('q-text').textContent = state.currentQ.en;
-  document.getElementById('q-hint').textContent = '💡 ' + state.currentQ.hint;
-  document.getElementById('feedback-wrap').classList.remove('visible');
-  document.getElementById('answer-input').value = '';
-  document.getElementById('transcript').textContent = 'Press 🎙 to answer by voice...';
-}
+window.startSession = function() {
+  document.getElementById('start-screen').style.display = 'none';
+  loadQuestion();
+};
 
-// 5. MICROPHONE
 window.toggleMic = function() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return alert("Chrome needed for voice.");
+  if (!SpeechRecognition) return alert("Please use Chrome or Edge for voice features.");
 
   if (state.isRecording) {
     state.recognition.stop();
-    state.isRecording = false;
-    document.getElementById('mic-btn').classList.remove('recording');
   } else {
     state.recognition = new SpeechRecognition();
     state.recognition.continuous = true;
-    state.recognition.onresult = (e) => {
-      const text = e.results[e.results.length - 1][0].transcript;
-      document.getElementById('answer-input').value += text + ' ';
-      document.getElementById('transcript').textContent = document.getElementById('answer-input').value;
+    state.recognition.interimResults = true;
+    state.recognition.lang = 'en-US';
+
+    state.recognition.onstart = () => {
+      state.isRecording = true;
+      document.getElementById('mic-btn').classList.add('recording');
+      document.getElementById('mic-btn').textContent = '⏹';
+      document.getElementById('transcript').textContent = "Listening...";
     };
+
+    state.recognition.onresult = (event) => {
+      let result = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        result += event.results[i][0].transcript;
+      }
+      document.getElementById('answer-input').value = result;
+      document.getElementById('transcript').textContent = result;
+    };
+
+    state.recognition.onend = () => {
+      state.isRecording = false;
+      document.getElementById('mic-btn').classList.remove('recording');
+      document.getElementById('mic-btn').textContent = '🎙';
+    };
+
     state.recognition.start();
-    state.isRecording = true;
-    document.getElementById('mic-btn').classList.add('recording');
   }
 };
 
-// 6. API SUBMIT
 window.submitAnswer = async function() {
-  const answer = document.getElementById('answer-input').value;
-  if (!answer) return alert("Please type or speak an answer.");
+  const answer = document.getElementById('answer-input').value.trim();
+  if (!answer) return alert("Please provide an answer first.");
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  btn.textContent = "Checking...";
+  btn.textContent = "Analyzing...";
 
   try {
     const res = await fetch('/api/feedback', {
@@ -182,19 +202,33 @@ window.submitAnswer = async function() {
       })
     });
     const data = await res.json();
-    const feedback = data.candidates[0].content.parts[0].text;
+    const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text || "No feedback received.";
     
     document.getElementById('feedback-body').textContent = feedback;
     document.getElementById('feedback-wrap').classList.add('visible');
+    document.getElementById('feedback-wrap').scrollIntoView({ behavior: 'smooth' });
   } catch (err) {
-    alert("Error connecting to AI.");
+    console.error(err);
+    alert("Error connecting to AI. Check your API key.");
   } finally {
     btn.disabled = false;
     btn.textContent = "Evaluate →";
   }
 };
 
-// 7. INIT
+// 4. HELPER LOGIC
+function loadQuestion() {
+  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
+  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
+  
+  document.getElementById('q-text').textContent = state.currentQ.en;
+  document.getElementById('q-badge').textContent = state.currentQ.type;
+  document.getElementById('q-hint').textContent = "💡 " + state.currentQ.hint;
+  document.getElementById('feedback-wrap').classList.remove('visible');
+  document.getElementById('answer-input').value = "";
+  document.getElementById('transcript').textContent = "Press 🎙 to answer by voice, or type below...";
+}
+
 function updateCounts() {
   document.getElementById('cnt-all').textContent = QUESTIONS.length;
   document.getElementById('cnt-sql').textContent = QUESTIONS.filter(q => q.type === 'sql').length;
@@ -202,9 +236,10 @@ function updateCounts() {
   document.getElementById('cnt-behavioral').textContent = QUESTIONS.filter(q => q.type === 'behavioral').length;
 }
 
+// 5. INITIALIZE
 window.onload = () => {
   updateCounts();
-  console.log("App ready");
+  console.log("System initialized.");
 };
 </script>
 
