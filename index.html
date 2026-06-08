@@ -2,13 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Interview Trainer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Trainer — Revenue · Product · Data</title>
+    <style>
+        /* ВАШИ СТИЛИ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg: #0f0f10; --bg2: #18181b; --bg3: #222226; --border: rgba(255,255,255,0.08); --text: #f0efe8; --text2: #9b9a95; --text3: #5a5a56; --accent: #7c6af7; --red: #f87171; }
+        html, body { height: 100%; background: var(--bg); color: var(--text); font-family: sans-serif; }
+        .layout { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
+        .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 20px; }
+        .main { display: flex; flex-direction: column; overflow: hidden; }
+        .hidden { display: none !important; }
+        .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .mic-btn.recording { background: var(--red); }
+        .feedback-wrap { padding: 20px; display: none; }
+    </style>
 </head>
 <body>
-    <!-- Ваш HTML остается здесь -->
+    <div class="layout">
+        <div class="sidebar">
+            <div onclick="setCategory('all')" class="nav-item">⚡ All</div>
+            <div onclick="setCategory('sql')" class="nav-item">🗄 SQL</div>
+        </div>
+        <div class="main" id="main-area">
+            <div id="start-screen" class="start-screen">
+                <h1>Ready?</h1>
+                <button onclick="startSession()">Start session →</button>
+            </div>
+            <div id="session-screen" class="hidden">
+                <h3 id="q-text">Loading...</h3>
+                <div id="feedback-wrap" class="feedback-wrap"></div>
+                <div class="controls">
+                    <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</div>
+                    <textarea id="answer-input"></textarea>
+                    <button onclick="submitAnswer()">Evaluate</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script>
-// 1. МАССИВ (Проверьте, чтобы он был целиком)
+// 1. МАССИВ
 const QUESTIONS = [
   // SQL / PYTHON
   { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
@@ -47,28 +81,55 @@ const QUESTIONS = [
   { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
 ];
 
-// 2. ФУНКЦИИ (ОБЯЗАТЕЛЬНО В ЭТОМ ПОРЯДКЕ)
-function updateCounts() {
-  console.log("Counts updated");
+// 2. СОСТОЯНИЕ
+let state = { category: 'all', currentQ: null, isRecording: false, recognition: null };
+
+// 3. ФУНКЦИИ
+function setCategory(c) { state.category = c; }
+
+function startSession() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('session-screen').style.display = 'flex';
+    loadQuestion();
 }
 
-function updateStats() {
-  console.log("Stats updated");
+function loadQuestion() {
+    state.currentQ = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+    document.getElementById('q-text').textContent = state.currentQ.en;
 }
 
-function showStart() {
-  const start = document.getElementById('start-screen');
-  if (start) start.style.display = 'flex';
+function toggleMic() {
+    if (state.isRecording) {
+        state.recognition.stop();
+        state.isRecording = false;
+        document.getElementById('mic-btn').classList.remove('recording');
+    } else {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        state.recognition = new SpeechRecognition();
+        state.recognition.onresult = (e) => document.getElementById('answer-input').value = e.results[0][0].transcript;
+        state.recognition.start();
+        state.isRecording = true;
+        document.getElementById('mic-btn').classList.add('recording');
+    }
 }
 
-function init() {
-  updateCounts();
-  updateStats();
-  showStart();
+async function submitAnswer() {
+    const answer = document.getElementById('answer-input').value;
+    const res = await fetch('/api/feedback', { 
+        method: 'POST', 
+        body: JSON.stringify({ contents: [{ parts: [{ text: answer }] }] }) 
+    });
+    const data = await res.json();
+    const fw = document.getElementById('feedback-wrap');
+    fw.innerHTML = data.candidates[0].content.parts[0].text;
+    fw.style.display = 'block';
 }
 
-// 3. ЗАПУСК
-init();
+// 4. ЗАЩИТА ОТ БЕЛОГО ЭКРАНА
+window.onload = () => {
+    console.log("App ready");
+    // Здесь можно вызвать init, если он нужен
+};
 </script>
 </body>
 </html>
