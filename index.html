@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Trainer — Revenue · Product · Data</title>
     <style>
-        /* ВАШИ СТИЛИ */
+        #start-screen {
+    display: flex !important; /* Принудительно показываем */
+    background: red !important; /* Если экран красный, значит div есть, но он невидимый */
+    height: 100vh !important;
+}
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root { --bg: #0f0f10; --bg2: #18181b; --bg3: #222226; --border: rgba(255,255,255,0.08); --text: #f0efe8; --text2: #9b9a95; --text3: #5a5a56; --accent: #7c6af7; --red: #f87171; }
         html, body { height: 100%; background: var(--bg); color: var(--text); font-family: sans-serif; }
