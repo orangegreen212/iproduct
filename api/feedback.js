@@ -1,7 +1,6 @@
-export const config = { 
-  runtime: 'edge',
-  regions: ['iad1'] 
-};
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+export const config = { runtime: 'edge', regions: ['iad1'] };
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
@@ -16,24 +15,20 @@ export default async function handler(req) {
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
   const body = await req.json();
+  const prompt = body.contents[0].parts[0].text;
 
-  // Используем модель gemini-1.5-flash-8b, она стабильнее для бесплатных аккаунтов
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent?key=${apiKey}`;
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
 
-  const response = await fetch(geminiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-
-  const data = await response.json();
-
-  return new Response(JSON.stringify(data), {
-    status: response.status,
-    headers: { 
-        'Content-Type': 'application/json', 
-        'Access-Control-Allow-Origin': '*' 
-    }
+  return new Response(JSON.stringify({
+    candidates: [{ content: { parts: [{ text: text }] } }]
+  }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
   });
 }
