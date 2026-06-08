@@ -12,134 +12,145 @@
     --accent-soft: rgba(124,106,247,0.15); --green: #4ade80; --green-soft: rgba(74,222,128,0.12);
     --amber: #f59e0b; --red: #f87171; --radius: 10px; --radius-sm: 6px;
   }
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; overflow: hidden; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; font-size: 14px; line-height: 1.6; overflow: hidden; }
   .layout { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
   .sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
   .nav-section { padding: 12px 10px; }
   .nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; color: var(--text2); transition: 0.15s; }
-  .nav-item:hover { background: var(--bg3); color: var(--text); }
   .nav-item.active { background: var(--accent-soft); color: var(--accent); }
   .nav-count { margin-left: auto; font-size: 10px; background: var(--bg3); padding: 1px 6px; border-radius: 10px; }
   .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
-  .start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-  .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; width: 100%; max-width: 500px; }
-  .cat-card { background: var(--bg2); border: 1px solid var(--border); padding: 15px; border-radius: var(--radius); cursor: pointer; }
-  .cat-card.selected { border-color: var(--accent); background: var(--accent-soft); }
-  .topbar { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); }
-  .session { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding-bottom: 20px; }
+  .start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .topbar { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--bg2); gap: 10px; }
+  .lang-btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text2); padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+  .lang-btn.active { background: var(--accent); color: #fff; }
+  .session { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
   .q-card { margin: 16px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
-  .q-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; background: var(--accent-soft); color: var(--accent); }
+  /* Framework Steps */
+  .fw-steps { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
+  .fw-step { font-size: 10px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--text3); }
+  .fw-step.active { border-color: var(--accent); color: var(--accent); }
   .transcript-wrap { margin: 0 20px; flex: 1; }
-  .transcript { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; min-height: 100px; color: var(--text2); font-style: italic; }
-  .feedback-wrap { margin: 16px 20px; display: none; }
+  .transcript { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; min-height: 100px; color: var(--text2); }
+  .feedback-wrap { margin: 16px 20px; display: none; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; }
   .feedback-wrap.visible { display: block; }
-  .feedback-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; }
-  .controls { padding: 15px 20px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; align-items: flex-end; }
-  .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; transition: 0.2s; }
-  .mic-btn.recording { background: rgba(248, 113, 113, 0.2); color: var(--red); border: 1px solid var(--red); box-shadow: 0 0 15px rgba(248,113,113,0.3); }
-  .answer-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; color: #fff; resize: none; font-family: inherit; }
-  .submit-btn { background: var(--accent); color: #fff; border: none; padding: 0 25px; height: 44px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
-  .submit-btn:disabled { opacity: 0.5; }
+  .controls { padding: 15px 20px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; }
+  .mic-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; }
+  .mic-btn.recording { background: var(--red); color: #fff; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(248, 113, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); } }
+  .answer-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; color: #fff; resize: none; }
+  .submit-btn { background: var(--accent); color: #fff; border: none; padding: 0 25px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; }
 </style>
 </head>
 <body>
 
 <div class="layout">
   <div class="sidebar">
-    <div style="padding: 20px; font-weight: 800; letter-spacing: 1px;">INTERVIEW TRAINER</div>
+    <div style="padding: 20px; font-weight: 800;">INTERVIEW TRAINER</div>
     <div class="nav-section">
-      <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All questions <span class="nav-count" id="cnt-all">0</span></div>
-      <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL / Python <span class="nav-count" id="cnt-sql">0</span></div>
-      <div class="nav-item" onclick="setCategory('product')" id="nav-product">💡 Product cases <span class="nav-count" id="cnt-product">0</span></div>
-      <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">🎯 Behavioral <span class="nav-count" id="cnt-behavioral">0</span></div>
+      <div class="nav-item active" onclick="setCategory('all')" id="nav-all">⚡ All <span class="nav-count" id="cnt-all">30</span></div>
+      <div class="nav-item" onclick="setCategory('sql')" id="nav-sql">🗄 SQL <span class="nav-count" id="cnt-sql">12</span></div>
+      <div class="nav-item" onclick="setCategory('product')" id="nav-product">💡 Product <span class="nav-count" id="cnt-product">10</span></div>
+      <div class="nav-item" onclick="setCategory('behavioral')" id="nav-behavioral">🎯 Behavioral <span class="nav-count" id="cnt-behavioral">8</span></div>
     </div>
   </div>
 
   <div class="main">
-    <!-- START SCREEN -->
     <div id="start-screen" class="start-screen">
-      <div style="font-size: 50px; margin-bottom: 10px;">🎙</div>
-      <h1 style="margin-bottom: 10px;">Ready to practice?</h1>
-      <p style="color: var(--text2); margin-bottom: 20px;">Choose a category and start your mock interview.</p>
-      <div class="category-grid">
-        <div class="cat-card selected" id="cat-all" onclick="selectCat('all')">All Questions</div>
-        <div class="cat-card" id="cat-sql" onclick="selectCat('sql')">SQL / Data</div>
-        <div class="cat-card" id="cat-product" onclick="selectCat('product')">Product Case</div>
-      </div>
-      <button class="submit-btn" onclick="startSession()" style="height: 55px; padding: 0 50px; font-size: 16px;">Start Session →</button>
+      <div style="font-size: 50px;">🎙</div>
+      <h1>Ready to practice?</h1>
+      <p style="color:var(--text2); margin: 15px 0 25px;">Choose category and answer out loud.</p>
+      <button class="submit-btn" onclick="startSession()" style="height:50px;">Start Session →</button>
     </div>
 
-    <!-- SESSION UI -->
     <div class="topbar">
-      <div id="session-title" style="font-weight: 600;">Session</div>
+      <div id="session-title" style="font-weight:600;">Session</div>
       <div style="flex:1"></div>
-      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer;">✕ End</button>
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-uk" onclick="setLang('uk')">УК</button>
+      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer; margin-left:10px;">✕ End</button>
     </div>
 
     <div class="session">
       <div class="q-card">
-        <span class="q-badge" id="q-badge">SQL</span>
-        <div id="q-text" style="font-size: 18px; font-weight: 500;">Loading...</div>
-        <div id="q-hint" style="margin-top: 15px; font-size: 12px; color: var(--text3); background: var(--bg3); padding: 10px; border-radius: 5px;"></div>
+        <div id="q-text" style="font-size:18px; font-weight:500;">Loading...</div>
+        <div id="q-hint" style="margin-top:10px; color:var(--text3); font-size:12px;"></div>
+        <div class="fw-steps" id="fw-steps"></div>
       </div>
 
       <div class="transcript-wrap">
-        <div id="transcript" class="transcript">Your transcript will appear here when you speak...</div>
+        <div id="transcript" class="transcript">Click 🎙 and start speaking...</div>
       </div>
 
       <div id="feedback-wrap" class="feedback-wrap">
-        <div class="feedback-card">
-          <div style="font-weight: 600; margin-bottom: 10px; color: var(--accent);">AI FEEDBACK:</div>
-          <div id="feedback-body" style="white-space: pre-wrap; font-size: 13px; color: var(--text2);"></div>
-        </div>
+        <div style="font-weight:600; color:var(--accent); margin-bottom:10px;">AI FEEDBACK:</div>
+        <div id="feedback-body" style="font-size:13px; color:var(--text2); line-height:1.6;"></div>
       </div>
     </div>
 
     <div class="controls">
       <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</div>
-      <textarea id="answer-input" class="answer-input" placeholder="Type your answer or use the mic..." rows="1"></textarea>
+      <textarea id="answer-input" class="answer-input" placeholder="Your answer..." rows="1"></textarea>
       <button id="submit-btn" class="submit-btn" onclick="submitAnswer()">Evaluate →</button>
     </div>
   </div>
 </div>
 
 <script>
-// 1. QUESTIONS DATA
 const QUESTIONS = [
-  { id:1, type:'sql', en:'Find the 7-day conversion rate for users. Explain logic.', hint:'Define grain — user or order level?' },
-  { id:2, type:'sql', en:'Calculate average order value per user for the last 30 days.', hint:'SUM(revenue) / COUNT(orders)' },
-  { id:3, type:'sql', en:'Write a funnel analysis: signup → login → first purchase.', hint:'COUNT DISTINCT users at each step' },
-  { id:4, type:'sql', en:'Find Day-7 retention. What tables do you need?', hint:'Cohort logic: MIN(event_date) per user' },
-  { id:5, type:'sql', en:'Users who made a second purchase within 30 days.', hint:'ROW_NUMBER() or LAG function' },
-  { id:13, type:'product', en:'Revenue dropped 18% week-over-week. Traffic is stable. Investigate.', hint:'Revenue = Traffic × Conversion × AOV' },
-  { id:14, type:'product', en:'Conversion rate dropped from 5% to 3.8%. No releases.', hint:'Segment by device, browser, country' },
-  { id:15, type:'product', en:'Traffic increased 30% but revenue stayed flat. Why?', hint:'Check traffic quality and AOV' },
-  { id:23, type:'behavioral', en:'Tell me about a time you made a mistake in analysis.', hint:'Show root cause → fix → prevention' },
-  { id:24, type:'behavioral', en:'Tell me about a time when your analysis changed a decision.', hint:'Quantify the business impact' },
-  { id:25, type:'behavioral', en:'Describe a disagreement with a stakeholder about data.', hint:'Align on definitions first' }
+  // SQL / PYTHON
+  { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
+  { id:2, type:'sql', level:'junior', en:'Calculate average order value per user for the last 30 days. Walk me through your SQL logic.', uk:'Порахуй середній чек на користувача за останні 30 днів. Поясни SQL логіку.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: SUM(revenue) / COUNT(orders) or per-user aggregation?' },
+  { id:3, type:'sql', level:'junior', en:'Write a funnel analysis: signup → login → first purchase. How would you calculate step-by-step conversion rates?', uk:'Воронка: реєстрація → логін → перша покупка. Як порахуєш конверсію кожного кроку?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: GROUP BY step, COUNT DISTINCT users at each step' },
+  { id:4, type:'sql', level:'junior', en:'Find Day-7 retention. What tables do you need and what is your logic?', uk:'Знайди retention на день 7. Які таблиці потрібні і яка логіка?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Cohort logic: MIN(event_date) per user, then check if active on day 7' },
+  { id:5, type:'sql', level:'middle', en:'You have users and events tables. Find users who made a second purchase within 30 days of their first purchase.', uk:'Таблиці users та events. Знайди юзерів, які зробили другу покупку впродовж 30 днів після першої.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Sequencing problem → ROW_NUMBER() per user, then LAG or self-join' },
+  { id:6, type:'sql', level:'middle', en:'Two dashboards show different revenue numbers for the same month. How would you debug this SQL issue?', uk:'Два дашборди показують різний дохід за один місяць. Як дебажиш SQL?', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Check: grain difference, filter differences, date truncation, JOIN duplicates' },
+  { id:7, type:'sql', level:'middle', en:'Calculate MoM revenue growth rate by channel. Explain aggregation and window function logic.', uk:'Порахуй MoM зростання доходу по каналах. Поясни логіку агрегації та window function.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'DATE_TRUNC + LAG(revenue) OVER (PARTITION BY channel ORDER BY month)' },
+  { id:8, type:'sql', level:'middle', en:'Find the top 3 revenue-generating products per country. Handle ties correctly.', uk:'Знайди топ-3 продукти за доходом по кожній країні. Правильно оброби однакові значення.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'RANK() vs DENSE_RANK() vs ROW_NUMBER() — which handles ties correctly?' },
+  { id:9, type:'sql', level:'junior', en:'How would you detect duplicate rows in a dataset and remove them? Explain your approach.', uk:'Як знайти дублікати в датасеті та видалити їх? Поясни підхід.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'ROW_NUMBER() OVER (PARTITION BY key_cols ORDER BY date) — keep rn = 1' },
+  { id:10, type:'sql', level:'middle', en:'Design a cohort retention table in Python with pandas. What steps would you follow?', uk:'Побудуй cohort retention таблицю в Python з pandas. Які кроки?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'Steps: parse dates → assign cohort_month → pivot table → divide by cohort size' },
+  { id:11, type:'sql', level:'middle', en:'Explain how you would run an A/B test analysis in Python. What statistical test and why?', uk:'Як провести A/B тест аналіз у Python? Який статистичний тест і чому?', framework:'Python Pipeline', steps:['Load & inspect','Clean data','Define cohort','Calculate metric','Visualize'], hint:'t-test for means, chi-square for proportions — state your H0 and significance level' },
+  { id:12, type:'sql', level:'junior', en:'You need to analyze revenue by device type and country. Walk through your Python/SQL approach.', uk:'Аналіз доходу по типу пристрою та країні. Поясни підхід Python/SQL.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'GROUP BY device, country — think about NULL handling and sorting' },
+
+  // PRODUCT CASES
+  { id:13, type:'product', level:'junior', en:'Revenue dropped 18% week-over-week. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% тиждень до тижня. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Revenue = Traffic × Conversion × AOV. Traffic is stable → focus on CR and AOV' },
+  { id:14, type:'product', level:'junior', en:'Conversion rate dropped from 5% to 3.8%. No product releases reported. What do you do?', uk:'Конверсія впала з 5% до 3.8%. Релізів не було. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, browser, country, acquisition channel. Check error logs.' },
+  { id:15, type:'product', level:'junior', en:'Traffic increased 30% but revenue stayed flat. Explain what happened.', uk:'Трафік виріс на 30%, а дохід залишився незмінним. Поясни що сталося.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Traffic quality issue? Bot traffic? Lower-intent users? AOV drop? Discount spike?' },
+  { id:16, type:'product', level:'junior', en:'Monthly churn increased from 4% to 7%. How would you investigate?', uk:'Місячний churn виріс з 4% до 7%. Як розслідуєш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by cohort, plan type, acquisition channel, usage level' },
+  { id:17, type:'product', level:'middle', en:'Revenue increased but churn also increased after a pricing change. What is your analysis?', uk:'Після зміни цін дохід виріс, але churn теж виріс. Який твій аналіз?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Trade-off analysis: who pays more? who leaves? short-term vs long-term revenue' },
+  { id:18, type:'product', level:'junior', en:'A newly built dashboard has only 10% adoption after 2 months. Why and what do you do?', uk:'Новий дашборд має лише 10% adoption через 2 місяці. Чому і що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'5 barrier types: Awareness, Relevance, Usability, Trust, Substitution' },
+  { id:19, type:'product', level:'middle', en:'AOV increased but total revenue decreased. Explain possible reasons and your plan.', uk:'Середній чек виріс, але загальний дохід впав. Поясни причини та план.', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Volume dropped more than AOV increased. Why did order count fall?' },
+  { id:20, type:'product', level:'middle', en:'After a checkout redesign: add-to-cart is stable, but checkout completion dropped 15%. What do you do?', uk:'Після редизайну checkout: add-to-cart стабільний, але завершення checkout впало на 15%. Що робиш?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'Segment by device, payment method. Check UX changes, error rates, performance.' },
+  { id:20, type:'product', level:'middle', en:'MRR is stable but engagement metrics are declining. Is this a problem?', uk:'MRR стабільний але engagement падає. Це проблема?', framework:'VDSHV', steps:['Validate','Decompose','Segment','Hypothesize','Validate hyp.'], hint:'MRR is a lagging indicator. Engagement is a leading indicator of future churn.' },
+  { id:21, type:'product', level:'middle', en:'How would you measure the success of a new onboarding flow?', uk:'Як виміряєш успішність нового onboarding flow?', framework:'Metrics Framework', steps:['Clarify goal','Primary metric','Feature metrics','Guardrail metrics','Decision'], hint:'Goal → Primary metric → Feature adoption → Guardrail (churn, NPS)' },
+  { id:22, type:'product', level:'middle', en:'How would you increase revenue by 20% in the next quarter? What levers would you pull?', uk:'Як збільшити дохід на 20% за наступний квартал? Які важелі?', framework:'MECE Revenue', steps:['Acquisition','Retention','Expansion','Prioritize','Recommend'], hint:'Revenue = Acquisition + Retention + Expansion. Which has highest ROI?' },
+
+  // BEHAVIORAL
+  { id:23, type:'behavioral', level:'junior', en:'Tell me about a time you made a mistake in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: identified root cause → fixed process → prevented recurrence' },
+  { id:24, type:'behavioral', level:'junior', en:'Tell me about a time when your analysis changed a business decision.', uk:'Розкажи коли твій аналіз змінив бізнес-рішення.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Quantify the impact. What was the decision before vs after your analysis?' },
+  { id:25, type:'behavioral', level:'junior', en:'Describe a disagreement with a stakeholder about data or metrics.', uk:'Опиши незгоду зі стейкхолдером щодо даних або метрик.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: validated first, found mismatch type, aligned on definitions, created source of truth' },
+  { id:26, type:'behavioral', level:'junior', en:'Tell me about a time you had to explain a complex analysis to a non-technical audience.', uk:'Розкажи як пояснював складний аналіз нетехнічній аудиторії.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Adapted communication level, used visuals, focused on business impact not methodology' },
+  { id:27, type:'behavioral', level:'middle', en:'Tell me about your greatest impact on a business metric.', uk:'Розкажи про найбільший вплив на бізнес-метрику.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Be specific: what metric, by how much, over what timeframe' },
+  { id:28, type:'behavioral', level:'middle', en:'Describe a time you had to work with incomplete or messy data. What did you do?', uk:'Опиши ситуацію з неповними або брудними даними. Що робив?', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: validated assumptions, documented limitations, communicated uncertainty to stakeholders' },
+  { id:29, type:'behavioral', level:'middle', en:'Tell me about a project where you had to balance speed vs accuracy in your analysis.', uk:'Проект де треба було балансувати швидкість і точність аналізу.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show decision-making: context of urgency, what you traded off, what you communicated' },
+  { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
 ];
 
-// 2. APP STATE
-let state = {
-  category: 'all',
-  currentQ: null,
-  isRecording: false,
-  recognition: null,
-  transcript: ""
+
+let state = { lang: 'en', category: 'all', currentQ: null, isRecording: false, recognition: null };
+
+window.setLang = function(l) {
+  state.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + l).classList.add('active');
+  if(state.currentQ) renderQuestion();
 };
 
-// 3. GLOBAL FUNCTIONS (Attached to window for onclick)
-window.setCategory = function(cat) {
-  state.category = cat;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + cat).classList.add('active');
+window.setCategory = function(c) {
+  state.category = c;
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('nav-' + c).classList.add('active');
   if(document.getElementById('start-screen').style.display === 'none') loadQuestion();
-};
-
-window.selectCat = function(cat) {
-  state.category = cat;
-  document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
-  document.getElementById('cat-' + cat).classList.add('selected');
 };
 
 window.startSession = function() {
@@ -147,9 +158,31 @@ window.startSession = function() {
   loadQuestion();
 };
 
+function loadQuestion() {
+  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
+  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = state.currentQ;
+  document.getElementById('q-text').textContent = q[state.lang];
+  document.getElementById('session-title').textContent = q.type.toUpperCase();
+  
+  const stepsContainer = document.getElementById('fw-steps');
+  stepsContainer.innerHTML = `<span style="color:var(--text3); font-weight:bold; margin-right:5px;">${q.fw}:</span>`;
+  q.steps.forEach(s => {
+    stepsContainer.innerHTML += `<span class="fw-step">${s}</span>`;
+  });
+  
+  document.getElementById('feedback-wrap').classList.remove('visible');
+  document.getElementById('answer-input').value = "";
+  document.getElementById('transcript').textContent = state.lang === 'en' ? "Listening..." : "Слухаю...";
+}
+
 window.toggleMic = function() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return alert("Please use Chrome or Edge for voice features.");
+  if (!SpeechRecognition) return alert("Use Chrome");
 
   if (state.isRecording) {
     state.recognition.stop();
@@ -157,28 +190,26 @@ window.toggleMic = function() {
     state.recognition = new SpeechRecognition();
     state.recognition.continuous = true;
     state.recognition.interimResults = true;
-    state.recognition.lang = 'en-US';
+    state.recognition.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
 
     state.recognition.onstart = () => {
       state.isRecording = true;
       document.getElementById('mic-btn').classList.add('recording');
-      document.getElementById('mic-btn').textContent = '⏹';
-      document.getElementById('transcript').textContent = "Listening...";
+      document.getElementById('transcript').textContent = "...";
     };
 
     state.recognition.onresult = (event) => {
-      let result = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        result += event.results[i][0].transcript;
+      let finalStr = "";
+      for (let i = 0; i < event.results.length; i++) {
+        finalStr += event.results[i][0].transcript + " ";
       }
-      document.getElementById('answer-input').value = result;
-      document.getElementById('transcript').textContent = result;
+      document.getElementById('answer-input').value = finalStr;
+      document.getElementById('transcript').textContent = finalStr;
     };
 
     state.recognition.onend = () => {
       state.isRecording = false;
       document.getElementById('mic-btn').classList.remove('recording');
-      document.getElementById('mic-btn').textContent = '🎙';
     };
 
     state.recognition.start();
@@ -186,62 +217,35 @@ window.toggleMic = function() {
 };
 
 window.submitAnswer = async function() {
-  const answer = document.getElementById('answer-input').value.trim();
-  if (!answer) return alert("Please provide an answer first.");
-
+  const answer = document.getElementById('answer-input').value;
+  if(!answer) return;
+  
   const btn = document.getElementById('submit-btn');
   btn.disabled = true;
-  btn.textContent = "Analyzing...";
+  btn.textContent = "...";
 
   try {
     const res = await fetch('/api/feedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `Evaluate this interview answer: "${answer}" for the question: "${state.currentQ.en}"` }] }]
+        contents: [{ parts: [{ text: `Evaluate this ${state.currentQ.fw} interview answer in ${state.lang}: "${answer}" for question: "${state.currentQ[state.lang]}"` }] }]
       })
     });
     const data = await res.json();
-    const feedback = data.candidates?.[0]?.content?.parts?.[0]?.text || "No feedback received.";
-    
-    document.getElementById('feedback-body').textContent = feedback;
+    document.getElementById('feedback-body').textContent = data.candidates[0].content.parts[0].text;
     document.getElementById('feedback-wrap').classList.add('visible');
-    document.getElementById('feedback-wrap').scrollIntoView({ behavior: 'smooth' });
-  } catch (err) {
-    console.error(err);
-    alert("Error connecting to AI. Check your API key.");
+  } catch (e) {
+    alert("API Error");
   } finally {
     btn.disabled = false;
     btn.textContent = "Evaluate →";
   }
 };
 
-// 4. HELPER LOGIC
-function loadQuestion() {
-  const pool = state.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === state.category);
-  state.currentQ = pool[Math.floor(Math.random() * pool.length)];
-  
-  document.getElementById('q-text').textContent = state.currentQ.en;
-  document.getElementById('q-badge').textContent = state.currentQ.type;
-  document.getElementById('q-hint').textContent = "💡 " + state.currentQ.hint;
-  document.getElementById('feedback-wrap').classList.remove('visible');
-  document.getElementById('answer-input').value = "";
-  document.getElementById('transcript').textContent = "Press 🎙 to answer by voice, or type below...";
-}
-
-function updateCounts() {
-  document.getElementById('cnt-all').textContent = QUESTIONS.length;
-  document.getElementById('cnt-sql').textContent = QUESTIONS.filter(q => q.type === 'sql').length;
-  document.getElementById('cnt-product').textContent = QUESTIONS.filter(q => q.type === 'product').length;
-  document.getElementById('cnt-behavioral').textContent = QUESTIONS.filter(q => q.type === 'behavioral').length;
-}
-
-// 5. INITIALIZE
 window.onload = () => {
-  updateCounts();
-  console.log("System initialized.");
+  document.getElementById('cnt-all').textContent = QUESTIONS.length;
 };
 </script>
-
 </body>
 </html>
