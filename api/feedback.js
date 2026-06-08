@@ -15,10 +15,6 @@ export default async function handler(req) {
     });
   }
 
-  if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
-  }
-
   const apiKey = process.env.GEMINI_API_KEY;
   let body;
   try {
@@ -27,8 +23,8 @@ export default async function handler(req) {
     return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
   }
 
-  // Используем проверенную модель
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  // Используем v1 и более короткий путь
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const geminiRes = await fetch(geminiUrl, {
     method: 'POST',
@@ -38,16 +34,8 @@ export default async function handler(req) {
 
   const data = await geminiRes.json();
 
-  // Если вдруг ошибка, выведем её в лог для отладки
-  if (!geminiRes.ok) {
-    return new Response(JSON.stringify({ error: data.error?.message || 'API Error' }), { 
-      status: geminiRes.status,
-      headers: { 'Content-Type': 'application/json' } 
-    });
-  }
-
   return new Response(JSON.stringify(data), {
-    status: 200,
+    status: geminiRes.status,
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
