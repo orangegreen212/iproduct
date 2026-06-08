@@ -7,9 +7,9 @@
 <body>
     <!-- Ваш HTML остается здесь -->
 
-<script type="module">
-  // 1. Массив вопросов
-  const QUESTIONS = [
+<script>
+// 1. МАССИВ (Проверьте, чтобы он был целиком)
+const QUESTIONS = [
   // SQL / PYTHON
   { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
   { id:2, type:'sql', level:'junior', en:'Calculate average order value per user for the last 30 days. Walk me through your SQL logic.', uk:'Порахуй середній чек на користувача за останні 30 днів. Поясни SQL логіку.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Think: SUM(revenue) / COUNT(orders) or per-user aggregation?' },
@@ -47,29 +47,28 @@
   { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
 ];
 
-  // 2. Объявляем функции внутри модуля
-  function updateCounts() { console.log("Counts updated"); }
-  function updateStats() { console.log("Stats updated"); }
-  function showStart() { 
-      const el = document.getElementById('start-screen');
-      if (el) el.style.display = 'flex';
-  }
+// 2. ФУНКЦИИ (ОБЯЗАТЕЛЬНО В ЭТОМ ПОРЯДКЕ)
+function updateCounts() {
+  console.log("Counts updated");
+}
 
-  // 3. Вызываем init() только тогда, когда DOM загружен
-  window.addEventListener('DOMContentLoaded', () => {
-    try {
-        updateCounts();
-        updateStats();
-        showStart();
-        console.log("App loaded successfully");
-    } catch (e) {
-        console.error("Init error:", e);
-    }
-  });
+function updateStats() {
+  console.log("Stats updated");
+}
 
-  // 4. Чтобы кнопки работали, привязываем их явно
-  window.setCategory = (c) => { console.log("Category set to", c); };
-  window.startSession = () => { console.log("Session started"); };
+function showStart() {
+  const start = document.getElementById('start-screen');
+  if (start) start.style.display = 'flex';
+}
+
+function init() {
+  updateCounts();
+  updateStats();
+  showStart();
+}
+
+// 3. ЗАПУСК
+init();
 </script>
 </body>
 </html>
