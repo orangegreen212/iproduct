@@ -235,9 +235,7 @@
 
     <div class="nav-section" style="margin-top:8px">
       <div class="nav-label">Settings</div>
-      <div class="nav-item" onclick="showApiKeyScreen()">
-        <span class="icon">🔑</span> API Key
-      </div>
+
       <div class="nav-item" onclick="resetProgress()">
         <span class="icon">🔄</span> Reset progress
       </div>
@@ -256,19 +254,17 @@
 
   <!-- MAIN -->
   <div class="main" id="main-area">
-    <!-- API KEY SCREEN -->
-    <div id="apikey-screen" style="display:none; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:40px 20px;">
-      <div style="font-size:36px; margin-bottom:16px;">🔑</div>
-      <div style="font-size:18px; font-weight:600; margin-bottom:8px;">Gemini API Key</div>
-      <div style="font-size:13px; color:var(--text2); max-width:360px; text-align:center; margin-bottom:24px; line-height:1.7;">
-        AI feedback uses Google Gemini 2.0 Flash (free tier).<br>Get your key at <a href="https://aistudio.google.com" style="color:var(--accent)">aistudio.google.com</a>
+    <!-- API KEY SCREEN (shown only if server misconfigured) -->
+    <div id="apikey-screen" style="display:none; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:40px 20px; text-align:center;">
+      <div style="font-size:36px; margin-bottom:16px;">⚙️</div>
+      <div style="font-size:18px; font-weight:600; margin-bottom:12px;">API not configured</div>
+      <div style="font-size:13px; color:var(--text2); max-width:380px; line-height:1.8; margin-bottom:24px;">
+        Add <code style="background:var(--bg3); padding:2px 7px; border-radius:4px; color:var(--accent)">GEMINI_API_KEY</code> to your Vercel project:<br><br>
+        Vercel Dashboard → Your project → <strong style="color:var(--text)">Settings → Environment Variables</strong><br><br>
+        Then redeploy. The key stays server-side — users never see it.
       </div>
-      <div class="apikey-form">
-        <label class="field-label">Your Gemini API Key</label>
-        <input class="field-input" type="password" id="api-key-input" placeholder="AIza..." />
-        <div class="field-hint">Stored locally in your browser. Never sent anywhere except Google.</div>
-        <button class="start-btn" style="width:100%" onclick="saveApiKey()">Save & start</button>
-      </div>
+      <div id="key-status" style="font-size:13px; color:var(--red); margin-bottom:20px;"></div>
+      <button class="start-btn" onclick="showStart()">Continue anyway →</button>
     </div>
 
     <!-- START SCREEN -->
@@ -431,7 +427,7 @@ const QUESTIONS = [
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let state = {
-  apiKey: localStorage.getItem('gemini_api_key') || '',
+
   lang: 'en',
   level: 'all',
   category: 'all',
@@ -447,66 +443,13 @@ let state = {
 function init() {
   updateCounts();
   updateStats();
-  if (!state.apiKey) {
-    showApiKeyScreen();
-  } else {
-    showStart();
-  }
+  showStart();
 }
 
 function showApiKeyScreen() {
   document.getElementById('apikey-screen').style.display = 'flex';
   document.getElementById('start-screen').style.display = 'none';
   document.getElementById('session-screen').style.display = 'none';
-  if (state.apiKey) document.getElementById('api-key-input').value = state.apiKey;
-}
-
-function saveApiKey() {
-  const key = document.getElementById('api-key-input').value.trim();
-  if (!key) { alert('Please enter your API key'); return; }
-  state.apiKey = key;
-  localStorage.setItem('gemini_api_key', key);
-  showStart();
-}
-
-function showStart() {
-  document.getElementById('apikey-screen').style.display = 'none';
-  document.getElementById('start-screen').style.display = 'flex';
-  document.getElementById('session-screen').style.display = 'none';
-}
-
-function selectCat(cat) {
-  state.category = cat;
-  document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('selected'));
-  document.getElementById('cat-' + cat).classList.add('selected');
-}
-
-function startSession() {
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('session-screen').style.display = 'flex';
-  loadQuestion();
-}
-
-// ─── NAVIGATION ───────────────────────────────────────────────────────────────
-function setCategory(cat) {
-  state.category = cat;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + cat).classList.add('active');
-  if (document.getElementById('session-screen').style.display !== 'none') {
-    loadQuestion();
-  }
-}
-
-function setLang(lang) {
-  state.lang = lang;
-  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-  document.getElementById('lang-uk').classList.toggle('active', lang === 'uk');
-  renderQuestion();
-}
-
-function onLevelChange() {
-  state.level = document.getElementById('level-select').value;
-  loadQuestion();
 }
 
 // ─── QUESTIONS ────────────────────────────────────────────────────────────────
@@ -731,7 +674,7 @@ Return ONLY valid JSON, no markdown, no explanation outside JSON:
   "betterPhrase": "<one example sentence that would make their answer stronger, formatted as a quote>"
 }`;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${state.apiKey}`;
+  const url = '/api/feedback';
 
   const res = await fetch(url, {
     method: 'POST',
