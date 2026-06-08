@@ -24,7 +24,7 @@ export default async function handler(req) {
   }
 
   // Используем v1 и более короткий путь
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
   const geminiRes = await fetch(geminiUrl, {
     method: 'POST',
