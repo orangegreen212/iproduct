@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interview Trainer</title>
-    <!-- Здесь все ваши стили CSS (я оставил их в вашем файле без изменений) -->
     <style>
-        /* ... (ВАШ CSS ОСТАВЬТЕ БЕЗ ИЗМЕНЕНИЙ) ... */
+        /* Здесь должны быть ваши стили из файла выше */
     </style>
 </head>
 <body>
-    <!-- (ВАШ HTML ОСТАВЬТЕ БЕЗ ИЗМЕНЕНИЙ) -->
+    <!-- Здесь ваш HTML из файла выше -->
 
     <script>
-        // 1. ПЕРЕМЕННЫЕ И МАССИВ (ДОЛЖНЫ БЫТЬ ПЕРВЫМИ)
         const QUESTIONS = [
   // SQL / PYTHON
   { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate for users. Explain your logic step by step without writing code.', uk:'Знайди 7-денну конверсію для користувачів. Поясни логіку крок за кроком без коду.', framework:'SQL Thinking', steps:['Define grain','Identify event','Choose method','Build logic','Business answer'], hint:'Start: "First, I need to define grain — user-level or order-level?"' },
@@ -51,81 +49,38 @@
   { id:29, type:'behavioral', level:'middle', en:'Tell me about a project where you had to balance speed vs accuracy in your analysis.', uk:'Проект де треба було балансувати швидкість і точність аналізу.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show decision-making: context of urgency, what you traded off, what you communicated' },
   { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
 ];
+        let state = { lang: 'en', level: 'all', category: 'all', currentQ: null, currentTranscript: '', isRecording: false, sessionHistory: JSON.parse(localStorage.getItem('session_history') || '[]'), stats: JSON.parse(localStorage.getItem('interview_stats') || '{"done":0,"totalScore":0,"streak":0}'), recognition: null };
 
-        let state = {
-            lang: 'en',
-            level: 'all',
-            category: 'all',
-            currentQ: null,
-            currentTranscript: '',
-            isRecording: false,
-            sessionHistory: JSON.parse(localStorage.getItem('session_history') || '[]'),
-            stats: JSON.parse(localStorage.getItem('interview_stats') || '{"done":0,"totalScore":0,"streak":0}'),
-            recognition: null,
-        };
-
-        // 2. ВСЕ ФУНКЦИИ (ПОД ПЕРЕМЕННЫМИ)
-        function init() {
-            updateCounts();
-            updateStats();
-            showStart();
+        function init() { updateCounts(); updateStats(); showStart(); }
+        function showStart() { document.getElementById('start-screen').style.display = 'flex'; document.getElementById('session-screen').style.display = 'none'; }
+        function startSession() { document.getElementById('start-screen').style.display = 'none'; document.getElementById('session-screen').style.display = 'flex'; loadQuestion(); }
+        function setCategory(c) { state.category = c; loadQuestion(); }
+        function loadQuestion() { 
+            state.currentQ = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)]; 
+            document.getElementById('q-text').textContent = state.currentQ.en; 
         }
-
         function toggleMic() {
-            if (state.isRecording) {
-                stopRecording();
-            } else {
-                startRecording();
-            }
-        }
-
-        function startRecording() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("Ваш браузер не поддерживает микрофон. Используйте Chrome.");
-                return;
-            }
-
-            const rec = new SpeechRecognition();
-            rec.continuous = true;
-            rec.interimResults = true;
-            rec.lang = state.lang === 'uk' ? 'uk-UA' : 'en-US';
-            
-            rec.onstart = () => {
+            if (state.isRecording) { state.recognition.stop(); state.isRecording = false; }
+            else {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                state.recognition = new SpeechRecognition();
+                state.recognition.onresult = (e) => { 
+                    const t = e.results[0][0].transcript; 
+                    document.getElementById('answer-input').value = t; 
+                };
+                state.recognition.start();
                 state.isRecording = true;
-                document.getElementById('mic-btn').classList.add('recording');
-                document.getElementById('mic-btn').textContent = '⏹';
-            };
-
-            rec.onresult = (e) => {
-                let final = '';
-                for (let i = e.resultIndex; i < e.results.length; i++) {
-                    if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
-                }
-                if (final) {
-                    state.currentTranscript = final;
-                    document.getElementById('answer-input').value = final;
-                    document.getElementById('transcript').innerText = final;
-                }
-            };
-
-            rec.onend = () => {
-                state.isRecording = false;
-                document.getElementById('mic-btn').classList.remove('recording');
-                document.getElementById('mic-btn').textContent = '🎙';
-            };
-
-            rec.start();
-            state.recognition = rec;
+            }
         }
-
-        function stopRecording() {
-            if (state.recognition) state.recognition.stop();
+        async function submitAnswer() {
+            const answer = document.getElementById('answer-input').value;
+            const res = await fetch('/api/feedback', { method: 'POST', body: JSON.stringify({ contents: [{ parts: [{ text: answer }] }] }) });
+            const data = await res.json();
+            document.getElementById('feedback-wrap').innerHTML = data.candidates[0].content.parts[0].text;
+            document.getElementById('feedback-wrap').style.display = 'block';
         }
-
-        // ... (ОСТАЛЬНЫЕ ВАШИ ФУНКЦИИ: submitAnswer, loadQuestion и т.д.) ...
-
-        // 3. ЗАПУСК
+        function updateCounts() {}
+        function updateStats() {}
         init();
     </script>
 </body>
