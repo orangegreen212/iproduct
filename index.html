@@ -47,71 +47,82 @@ const QUESTIONS = [
   { id:30, type:'behavioral', level:'middle', en:'Describe a situation where you proactively identified a problem before it was reported.', uk:'Ситуація де ти проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:['Situation','Task','Action','Result'], hint:'Show: monitoring habit, pattern recognition, escalation path, business impact prevented' },
 ];
 
-// 2. STATE
 let state = { category: 'all', currentQ: null, isRecording: false, recognition: null, stats: {done:0} };
 
-// 3. ВСЕ ФУНКЦИИ (Ничего не пропущено!)
 function init() {
-    updateCounts();
-    updateStats();
+    safeUpdate('cnt-all', QUESTIONS.length);
     showStart();
 }
 
+// УНИВЕРСАЛЬНАЯ ЗАЩИТА ОТ ОШИБОК
+function safeSet(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
+
+function safeUpdate(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
 function showStart() {
-    // Логика показа стартового экрана
-    console.log("Start screen shown");
+    const start = document.getElementById('start-screen');
+    const session = document.getElementById('session-screen');
+    if (start) start.style.display = 'flex';
+    if (session) session.style.display = 'none';
 }
 
 function startSession() {
-    document.getElementById('start-screen').style.display = 'none';
-    document.getElementById('session-screen').style.display = 'block';
+    const start = document.getElementById('start-screen');
+    const session = document.getElementById('session-screen');
+    if (start) start.style.display = 'none';
+    if (session) session.style.display = 'flex';
     loadQuestion();
 }
 
 function loadQuestion() {
+    if (QUESTIONS.length === 0) return;
     state.currentQ = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
-    document.getElementById('q-text').textContent = state.currentQ.en;
-}
-
-function updateCounts() {
-    console.log("Counts updated");
-    // Можно оставить пустым, если элементы не найдены, ошибки не будет
-}
-
-function updateStats() {
-    console.log("Stats updated");
+    const qText = document.getElementById('q-text');
+    if (qText) qText.textContent = state.currentQ.en;
 }
 
 function toggleMic() {
+    const btn = document.getElementById('mic-btn');
     if (state.isRecording) {
         state.recognition.stop();
         state.isRecording = false;
+        if (btn) btn.classList.remove('recording');
     } else {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) return alert('Браузер не поддерживает микрофон');
         state.recognition = new SpeechRecognition();
-        state.recognition.onresult = (e) => document.getElementById('answer-input').value = e.results[0][0].transcript;
+        state.recognition.onresult = (e) => {
+            const input = document.getElementById('answer-input');
+            if (input) input.value = e.results[0][0].transcript;
+        };
         state.recognition.start();
         state.isRecording = true;
+        if (btn) btn.classList.add('recording');
     }
 }
 
 async function submitAnswer() {
-    const answer = document.getElementById('answer-input').value;
+    const input = document.getElementById('answer-input');
+    const answer = input ? input.value : "";
     const res = await fetch('/api/feedback', { 
         method: 'POST', 
         body: JSON.stringify({ contents: [{ parts: [{ text: answer }] }] }) 
     });
     const data = await res.json();
-    document.getElementById('feedback-wrap').innerHTML = data.candidates[0].content.parts[0].text;
-    document.getElementById('feedback-wrap').style.display = 'block';
+    const fw = document.getElementById('feedback-wrap');
+    if (fw) {
+        fw.innerHTML = data.candidates[0].content.parts[0].text;
+        fw.style.display = 'block';
+    }
 }
 
-function setCategory(c) { state.category = c; loadQuestion(); }
-function resetProgress() { localStorage.clear(); location.reload(); }
-function autoResize(el) {}
-function handleEnter(e) {}
-
-// ЗАПУСК
+// Запуск
 init();
 </script>
 </body>
