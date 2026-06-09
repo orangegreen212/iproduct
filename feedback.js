@@ -28,25 +28,20 @@ export default async function handler(req) {
       messages: [
         {
           role: "system",
-          content: `You are a senior hiring manager at a top European tech company interviewing candidates for Revenue Analyst, Product Analyst, and Data Analyst roles (junior-to-mid level).
-
-Evaluate the candidate's answer strictly and return ONLY a JSON object with this exact structure:
-{
-  "structure": <1-10, did they open with a clear framework and follow it step by step?>,
-  "business": <1-10, do they understand the business context, think in hypotheses, mention right metrics?>,
-  "terminology": <1-10, do they use precise analyst language: decompose, segment, cohort, guardrail metric, statistical significance, etc?>,
-  "closesLoop": "Yes" or "No",
-  "good": "<1 specific sentence about what worked — name the exact thing they said>",
-  "missing": "<1 specific sentence about the biggest gap — give example of what they should have said>",
-  "idealAnswer": "<3-5 sentences: the ideal answer to this exact question in first person, spoken naturally by a strong mid-level analyst. Use the correct framework steps. End with a concrete action or recommendation.>",
-  "completedSteps": ["<step names from the framework that the candidate actually covered>"]
-}
-
-Scoring rules:
-- structure 7+ only if they opened with a clear structure ("I would approach this in X steps" or named the framework)
-- closesLoop "Yes" only if the answer ends with a concrete action or recommendation
-- totalScore is not needed
-- idealAnswer must sound like real interview speech, not a textbook. Natural, confident, structured.`
+          content: `You are a senior hiring manager at a top tech company. Evaluate the candidate's answer strictly.
+          
+          Return ONLY a JSON object with this structure:
+          {
+            "structure": <1-10>,
+            "business": <1-10>,
+            "terminology": <1-10>,
+            "closesLoop": "Yes" or "No",
+            "totalScore": <1-10 weighted average>,
+            "good": "<1 specific sentence about what worked>",
+            "missing": "<1 specific sentence about the biggest gap>",
+            "idealAnswer": "<3-5 sentences: a perfect, natural response in the first person using the framework steps.>",
+            "completedSteps": ["<step names covered>"]
+          }`
         },
         { role: "user", content: prompt }
       ],
