@@ -15,280 +15,50 @@
 }
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; overflow: hidden; }
 .layout { display: grid; grid-template-columns: 220px 1fr; height: 100vh; }
-.sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+.sidebar { background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
 .sidebar-head { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); }
+.logo { font-size: 13px; font-weight: 600; color: var(--text); }
 .nav-group { padding: 14px 12px 0; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--r-sm); cursor: pointer; font-size: 13px; color: var(--text2); }
+.nav-label { font-size: 10px; color: var(--text3); text-transform: uppercase; padding: 0 8px; margin-bottom: 5px; letter-spacing: 0.09em; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--r-sm); cursor: pointer; font-size: 13px; color: var(--text2); transition: 0.15s; }
+.nav-item:hover { background: var(--bg3); color: var(--text); }
 .nav-item.active { background: rgba(108,92,231,0.14); color: var(--accent2); }
+.nav-count { margin-left: auto; font-size: 10px; background: var(--bg4); color: var(--text3); padding: 1px 6px; border-radius: 20px; }
 .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
-.start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; }
-.cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 400px; margin-bottom: 24px; }
+.start-screen { position: absolute; inset: 0; background: var(--bg); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; overflow-y: auto; }
+.cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 400px; margin: 24px 0; }
 .cat-tile { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; cursor: pointer; text-align: left; transition: 0.15s; }
 .cat-tile.sel { border-color: var(--accent); background: rgba(108,92,231,0.1); }
-.topbar { display: flex; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--border); background: var(--bg2); }
-.session { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+.topbar { display: flex; align-items: center; padding: 10px 18px; border-bottom: 1px solid var(--border); background: var(--bg2); min-height: 52px; }
+.session { flex: 1; overflow-y: auto; padding-bottom: 100px; scroll-behavior: smooth; }
 .q-card { margin: 14px 16px 0; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 18px; }
+.q-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; background: rgba(108,92,231,0.12); color: var(--accent2); display: inline-block; margin-bottom: 10px; }
 .fw-bar { margin: 10px 16px; background: var(--bg2); border: 1px solid var(--border); padding: 12px; border-radius: var(--r); }
-.fw-step { font-size: 11px; padding: 4px 11px; border-radius: 20px; border: 1px solid var(--border); color: var(--text3); margin-right: 5px; }
+.fw-step { font-size: 11px; padding: 4px 11px; border-radius: 20px; border: 1px solid var(--border); color: var(--text3); margin-right: 5px; display: inline-block; margin-bottom: 5px; }
 .fw-step.done { color: var(--green); background: rgba(0,184,148,0.1); border-color: transparent; }
-.transcript { margin: 10px 16px; background: var(--bg2); border: 1px solid var(--border); padding: 14px; border-radius: var(--r); min-height: 80px; font-size: 13px; color: var(--text2); }
+.transcript { margin: 10px 16px; background: var(--bg2); border: 1px solid var(--border); padding: 14px; border-radius: var(--r); min-height: 90px; font-size: 13px; color: var(--text2); }
 .feedback-wrap { margin: 10px 16px; display: none; }
 .feedback-wrap.show { display: block; }
-.feedback-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
-.score-row { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--border); }
+.score-row { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); background: var(--bg2); border-radius: var(--r) var(--r) 0 0; }
 .score-cell { padding: 12px; text-align: center; border-right: 1px solid var(--border); }
 .score-val { font-size: 18px; font-weight: 700; }
-.val-hi { color: var(--green); }
-.val-lo { color: var(--red); }
-.controls { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; align-items: flex-end; }
+.feedback-body { background: var(--bg2); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--r) var(--r); padding: 15px; font-size: 13px; }
+.controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; align-items: flex-end; }
 .mic-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .mic-btn.recording { border-color: var(--red); background: rgba(214,48,49,0.15); animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(214,48,49,0.4); } 70% { box-shadow: 0 0 0 10px rgba(214,48,49,0); } 100% { box-shadow: 0 0 0 0 rgba(214,48,49,0); } }
-.answer-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 11px; color: #fff; resize: none; min-height: 48px; }
+.answer-input { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px; color: #fff; resize: none; min-height: 48px; max-height: 120px; }
 .submit-btn { height: 48px; padding: 0 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--r-sm); font-weight: 600; cursor: pointer; }
+.lang-tog { display: flex; background: var(--bg3); border-radius: var(--r-sm); padding: 3px; gap: 2px; }
+.lang-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; border: none; background: none; color: var(--text3); cursor: pointer; }
+.lang-btn.active { background: var(--bg2); color: var(--text); border: 1px solid var(--border2); }
 </style>
 </head>
 <body>
 
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-head"><div class="logo">Interview Trainer</div></div>
+    <div class="sidebar-head"><div class="logo">Interview Trainer</div><div class="logo-sub">Revenue · Product · Data</div></div>
     <div class="nav-group">
-      <div class="nav-item active" id="nav-all" onclick="setCategory('all')">All Questions</div>
-      <div class="nav-item" id="nav-sql" onclick="setCategory('sql')">SQL / Python</div>
-      <div class="nav-item" id="nav-product" onclick="setCategory('product')">Product Cases</div>
-    </div>
-  </aside>
-
-  <div class="main">
-    <div id="start-screen" class="start-screen">
-      <h1 class="start-title">Ready to practice?</h1>
-      <div class="cat-grid">
-        <div class="cat-tile sel" id="cat-all" onclick="selectCat('all')">All</div>
-        <div class="cat-tile" id="cat-sql" onclick="selectCat('sql')">SQL</div>
-        <div class="cat-tile" id="cat-product" onclick="selectCat('product')">Product</div>
-      </div>
-      <button class="submit-btn" onclick="startSession()" style="width:200px; height:50px;">Start Session</button>
-    </div>
-
-    <div class="topbar">
-      <div id="session-title">Session</div>
-      <div style="flex:1"></div>
-      <button class="submit-btn" style="height:30px; padding:0 10px; font-size:11px;" onclick="setLang('en')" id="btn-en">EN</button>
-      <button class="submit-btn" style="height:30px; padding:0 10px; font-size:11px; margin-left:5px; background:var(--bg3)" onclick="setLang('uk')" id="btn-uk">УК</button>
-    </div>
-
-    <div class="session" id="session">
-      <div class="q-card">
-        <div id="q-text" style="font-size:18px; font-weight:500;">Loading...</div>
-      </div>
-      <div class="fw-bar">
-        <div id="fw-steps"></div>
-      </div>
-      <div class="transcript" id="transcript">Transcript...</div>
-      <div id="feedback-wrap" class="feedback-wrap">
-        <div class="feedback-card">
-          <div class="score-row" id="score-row"></div>
-          <div id="feedback-body" style="padding:15px; font-size:13px; color:var(--text2);"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</div>
-      <textarea id="answer-input" class="answer-input" placeholder="Speak or type..."></textarea>
-      <button id="submit-btn" class="submit-btn" onclick="submitAnswer()">Evaluate</button>
-    </div>
-  </div>
-</div>
-
-<script>
-const S = {
-  lang: 'en', category: 'all', currentQ: null, isRecording: false, recognition: null,
-  stats: { done: 0, total: 0 }
-};
-
-const QUESTIONS = [
-  { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate. Explain your logic step by step — no code needed.', uk:'Знайди 7-денну конверсію. Поясни логіку крок за кроком, код не потрібен.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'Start: first I define grain — user-level or order-level?' },
-  { id:2, type:'sql', level:'junior', en:'Calculate average order value per user for the last 30 days. Walk me through the SQL logic.', uk:'Порахуй середній чек на користувача за 30 днів. Поясни SQL логіку.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'SUM(revenue) / COUNT(orders) — or per-user aggregation first?' },
-  { id:3, type:'sql', level:'junior', en:'Funnel analysis: signup → login → first purchase. How do you calculate step-by-step conversion?', uk:'Воронка: реєстрація → логін → перша покупка. Як рахуєш конверсію кожного кроку?', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'GROUP BY step, COUNT DISTINCT users at each step' },
-  { id:4, type:'sql', level:'junior', en:'Find Day-7 retention. What tables, what logic?', uk:'Day-7 retention. Які таблиці, яка логіка?', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'MIN(event_date) per user → check if active on day 7' },
-  { id:5, type:'sql', level:'middle', en:'Find users who made a second purchase within 30 days of their first.', uk:'Знайди юзерів з другою покупкою впродовж 30 днів після першої.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'ROW_NUMBER() per user → LAG or self-join for time diff' },
-  { id:6, type:'sql', level:'middle', en:'Two dashboards show different revenue for the same month. How do you debug it?', uk:'Два дашборди — різний дохід за той самий місяць. Як дебажиш?', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'Check: grain, filters, date truncation, JOIN duplicates' },
-  { id:7, type:'sql', level:'middle', en:'Calculate MoM revenue growth rate by channel using window functions.', uk:'MoM зростання доходу по каналах. Використай window functions.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'DATE_TRUNC + LAG(revenue) OVER (PARTITION BY channel ORDER BY month)' },
-  { id:8, type:'sql', level:'middle', en:'Top 3 revenue products per country — handle ties correctly.', uk:'Топ-3 продукти за доходом по країнах — правильно обробити ties.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'RANK() vs DENSE_RANK() vs ROW_NUMBER() — which one for ties?' },
-  { id:9, type:'sql', level:'junior', en:'How do you detect and remove duplicate rows? Explain the approach.', uk:'Як знайти та видалити дублікати? Поясни підхід.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'ROW_NUMBER() OVER (PARTITION BY key_cols ORDER BY date) — keep rn=1' },
-  { id:10, type:'sql', level:'middle', en:'Build a cohort retention table in Python with pandas. Walk through your steps.', uk:'Побудуй cohort retention таблицю в Python з pandas.', framework:'Python Pipeline', steps:["Load & inspect","Clean data","Define cohort","Calculate","Visualize"], hint:'parse dates → cohort_month → pivot → divide by cohort size' },
-  { id:11, type:'sql', level:'middle', en:'Run an A/B test analysis in Python. Which statistical test and why?', uk:'A/B тест аналіз у Python. Який статистичний тест і чому?', framework:'Python Pipeline', steps:["Load & inspect","Clean data","Define cohort","Calculate","Visualize"], hint:'t-test for means, chi-square for proportions — state H0 first' },
-  { id:12, type:'sql', level:'junior', en:'Analyze revenue by device type and country. Walk through your approach.', uk:'Аналіз доходу по типу пристрою та країні.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'GROUP BY device, country — think about NULLs and sort order' },
-  { id:13, type:'product', level:'junior', en:'Revenue dropped 18% WoW. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% WoW. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Revenue = Traffic x CR x AOV. Traffic stable → focus on CR and AOV' },
-  { id:14, type:'product', level:'junior', en:'Conversion dropped from 5% to 3.8%. No releases reported. What do you do?', uk:'Конверсія впала з 5% до 3.8%. Релізів не було. Що робиш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment by device, browser, country, channel. Check error logs.' },
-  { id:15, type:'product', level:'junior', en:'Traffic up 30%, revenue flat. Explain what happened.', uk:'Трафік +30%, дохід не змінився. Поясни що сталося.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Traffic quality? Bots? Lower-intent users? AOV drop? Discount spike?' },
-  { id:16, type:'product', level:'junior', en:'Monthly churn increased from 4% to 7%. How do you investigate?', uk:'Churn виріс з 4% до 7%. Як розслідуєш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment by cohort, plan, acquisition channel, usage level' },
-  { id:17, type:'product', level:'middle', en:'Revenue up and churn up after a pricing change. Analyze the trade-off.', uk:'Після зміни цін дохід виріс і churn виріс. Аналізуй trade-off.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Who pays more? Who leaves? Short-term vs long-term revenue' },
-  { id:18, type:'product', level:'junior', en:'A new dashboard has 10% adoption after 2 months. Why, and what do you do?', uk:'Новий дашборд — 10% adoption через 2 місяці. Чому і що робиш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'5 barriers: Awareness, Relevance, Usability, Trust, Substitution' },
-  { id:19, type:'product', level:'middle', en:'AOV increased but total revenue decreased. Explain possible reasons.', uk:'AOV виріс, але загальний дохід впав. Поясни причини.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Volume dropped more than AOV increased — why did order count fall?' },
-  { id:20, type:'product', level:'middle', en:'After checkout redesign: add-to-cart stable, checkout completion -15%. What do you do?', uk:'Після редизайну: add-to-cart стабільний, checkout completion -15%. Що робиш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment by device, payment method. Check UX changes and error rates.' },
-  { id:21, type:'product', level:'middle', en:'MRR is stable but engagement is declining. Is this a problem?', uk:'MRR стабільний, але engagement падає. Це проблема?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'MRR = lagging indicator. Engagement = leading indicator of future churn.' },
-  { id:22, type:'product', level:'middle', en:'How would you increase revenue 20% next quarter? What levers?', uk:'Як збільшити дохід на 20% за квартал? Які важелі?', framework:'MECE Revenue', steps:["Acquisition","Retention","Expansion","Prioritize","Recommend"], hint:'Revenue = Acquisition + Retention + Expansion. Which has highest ROI?' },
-  { id:31, type:'product', level:'junior', en:'55% of users do not complete the application. Why do you think this is the case and how would you investigate?', uk:'55% користувачів не завершують заявку. Чому і як розслідуєш?', framework:'RCA', steps:["Clarify baseline","Internal factors","External factors","Hypothesize","Validate"], hint:'Is this sudden or always? Check UX steps, form length, bugs, mobile vs desktop' },
-  { id:32, type:'product', level:'junior', en:'There is a YoY slowdown in transactions. How would you structure your analysis?', uk:'Річне сповільнення транзакцій. Як структуруєш аналіз?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Clarify which transaction type. Segment by geo, device, user type, external factors' },
-  { id:33, type:'product', level:'middle', en:'How would you determine if Messenger should introduce group calling?', uk:'Як визначити чи варто Messenger запустити групові дзвінки?', framework:'Product Sense', steps:["Clarify goal","Define audience","Success metrics","A/B test design","Risks"], hint:'Business goal → target users → primary metric → cannibalization risk' },
-  { id:34, type:'product', level:'middle', en:'For a social media app, how would you analyze whether content from friends or strangers drives higher engagement?', uk:'Контент від друзів чи чужих — що краще для engagement?', framework:'Experiment Design', steps:["Define engagement","Split sample","Primary metric","Secondary metric","Conclude"], hint:'Define engagement first: time spent, comments, shares? Then A/B test with holdout' },
-  { id:35, type:'product', level:'middle', en:'A new app shows 25% drop-off at sign-up. How do you analyze this?', uk:'Новий додаток — 25% відвалу при реєстрації. Як аналізуєш?', framework:'RCA', steps:["Clarify baseline","Internal factors","External factors","Hypothesize","Validate"], hint:'Split by platform iOS/Android → funnel steps → API errors → UX issues' },
-  { id:36, type:'product', level:'junior', en:'What metrics would you use to increase posts with comments in a group?', uk:'Які метрики для збільшення постів з коментарями в групі?', framework:'AARM', steps:["Acquisition","Activation","Retention","Monetization"], hint:'Engagement metrics for content creators + commenters + guardrail: spam rate' },
-  { id:37, type:'product', level:'middle', en:'How would you evaluate whether a new feature is worth rolling out to all users?', uk:'Як оцінити чи варто розгортати нову фічу на всіх?', framework:'A/B Framework', steps:["Hypothesis","Success metrics","Statistical significance","Business impact","Decision"], hint:'North Star + guardrail metrics → p-value → business ROI → rollout decision' },
-  { id:38, type:'product', level:'junior', en:'How would you analyze why user engagement is declining?', uk:'Як аналізувати падіння engagement?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment new vs returning users → cohort analysis → product releases → seasonality' },
-  { id:39, type:'product', level:'middle', en:'Adoption is high but retention is low — how would you diagnose and communicate this?', uk:'Adoption високий, retention низький — як діагностуєш і комунікуєш?', framework:'Leaky Bucket', steps:["Validate","Time-to-value","Day 1/7 dropoff","Segment","BLUF to leadership"], hint:'Users come but product does not deliver value → analyze time-to-value → D1/D7 churn' },
-  { id:40, type:'product', level:'junior', en:'How would you measure the success of a new onboarding flow?', uk:'Як виміряєш успіх нового onboarding flow?', framework:'Metrics Framework', steps:["Clarify goal","Primary metric","Feature metrics","Guardrail metrics","Decision"], hint:'Goal → primary metric → adoption rate → guardrail: churn, NPS' },
-  { id:41, type:'product', level:'middle', en:'After launching a recommendation engine, how would you measure its impact on revenue?', uk:'Після запуску recommendation engine — як міряєш вплив на дохід?', framework:'A/B Framework', steps:["Hypothesis","Success metrics","Statistical significance","Business impact","Decision"], hint:'A/B test: CTR → add-to-cart → AOV and conversion uplift' },
-  { id:42, type:'product', level:'junior', en:'We are considering launching in a new city. What data would you look at?', uk:'Розглядаємо запуск у новому місті. Які дані вивчиш?', framework:'Market Analysis', steps:["TAM/SAM","Unit economics","Competitors","Infrastructure","Legal"], hint:'TAM → unit economics of similar city → CAC estimate → logistics infrastructure' },
-  { id:43, type:'product', level:'middle', en:'A competitor is gaining market share. How would you investigate why?', uk:'Конкурент набирає частку ринку. Як розслідуєш?', framework:'Competitive Analysis', steps:["Product features","Pricing","Sentiment","Marketing","Recommendation"], hint:'AppStore reviews → pricing comparison → SimilarWeb traffic → feature gaps' },
-  { id:44, type:'product', level:'middle', en:'You are launching a new feature — how would you measure its strategic impact on growth?', uk:'Запускаєш нову фічу — як міряєш стратегічний вплив на зростання?', framework:'Growth Metrics', steps:["Clarify goal","Incremental growth","A/B holdout","LTV impact","Cannibalization"], hint:'Incremental lift via A/B holdout → activation + LTV + cannibalization check' },
-  { id:45, type:'product', level:'junior', en:'What KPIs would you track to evaluate the health of a subscription-based business?', uk:'Які KPI для здоров\'я subscription бізнесу?', framework:'SaaS Metrics', steps:["Revenue","Churn","Acquisition","Lifetime value","Ratio"], hint:'MRR/ARR → churn rate → CAC → LTV → LTV:CAC ratio' },
-  { id:46, type:'product', level:'middle', en:'How would you visualize sales and customer usage data for executives?', uk:'Як візуалізуєш дані продажів і використання продукту для керівництва?', framework:'Dashboard Design', steps:["Clarify audience","Key KPIs","Chart types","Drill-downs","Insights"], hint:'Who is the audience → line charts for trends, cohorts for retention → top KPIs first' },
-  { id:47, type:'product', level:'junior', en:'How would you model the expected ROI of a new product launch?', uk:'Як змоделювати очікуваний ROI нового продукту?', framework:'ROI Model', steps:["Clarify timeline","Revenue estimate","Cost estimate","ROI formula","Sensitivity"], hint:'Conversion funnel x LTV for revenue; CAPEX + OPEX for costs; ROI = (Revenue - Cost) / Cost' },
-  { id:48, type:'product', level:'middle', en:'How would you evaluate the ROI of a strategic bet or initiative?', uk:'Як оцінюєш ROI стратегічної ставки?', framework:'ROI Model', steps:["Clarify timeline","Revenue estimate","Cost estimate","ROI formula","Sensitivity"], hint:'Costs: CAPEX + OPEX + opportunity cost. Returns: direct revenue + indirect (retention)' },
-  { id:49, type:'product', level:'junior', en:'A marketing campaign underperformed. What would you do?', uk:'Маркетингова кампанія недопрацювала. Що робиш?', framework:'RCA', steps:["Clarify baseline","Funnel breakdown","Segment","Hypothesize","Validate"], hint:'Impressions → clicks → signups → purchases. Compare with historical cohorts. Bad creative? Wrong audience?' },
-  { id:50, type:'product', level:'middle', en:'How would you test the impact of expanding into a new international market?', uk:'Як тестуєш вплив виходу на новий міжнародний ринок?', framework:'Geo Test', steps:["Select proxy market","Launch MVP","Measure CAC/LTV","Compare to forecast","Decision"], hint:'Choose similar market as control → measure CAC, LTV, logistics metrics → vs forecast' },
-  { id:23, type:'behavioral', level:'junior', en:'Tell me about a mistake you made in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Show: found root cause → fixed process → prevented recurrence' },
-  { id:24, type:'behavioral', level:'junior', en:'Tell me about a time your analysis changed a business decision.', uk:'Коли твій аналіз змінив бізнес-рішення.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Quantify the impact. Decision before vs after your analysis.' },
-  { id:25, type:'behavioral', level:'junior', en:'Describe a disagreement with a stakeholder about data or metrics.', uk:'Незгода зі стейкхолдером щодо даних або метрик.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Validated first → found mismatch type → aligned on definitions' },
-  { id:26, type:'behavioral', level:'junior', en:'Tell me about explaining a complex analysis to a non-technical audience.', uk:'Як пояснював складний аналіз нетехнічній аудиторії.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Adapted level, used visuals, focused on business impact not method' },
-  { id:27, type:'behavioral', level:'middle', en:'Tell me about your greatest impact on a business metric.', uk:'Найбільший вплив на бізнес-метрику.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Be specific: which metric, by how much, over what timeframe' },
-  { id:28, type:'behavioral', level:'middle', en:'Describe working with incomplete or messy data.', uk:'Робота з неповними або брудними даними.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Validated assumptions, documented limits, communicated uncertainty' },
-  { id:29, type:'behavioral', level:'middle', en:'A project where you balanced speed vs accuracy in analysis.', uk:'Проект де балансував швидкість і точність аналізу.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Context of urgency, what you traded off, what you communicated' },
-  { id:30, type:'behavioral', level:'middle', en:'When you proactively identified a problem before it was reported.', uk:'Коли проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Monitoring habit, pattern recognition, escalation, impact prevented' },
-  { id:51, type:'behavioral', level:'junior', en:'What is the project you are most proud of?', uk:'Яким проектом ти найбільше пишаєшся?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Context → your specific role → analytical steps taken → business impact with metrics' },
-  { id:52, type:'behavioral', level:'junior', en:'Tell me about a time you had to deal with conflicting priorities with stakeholders.', uk:'Конфліктні пріоритети зі стейкхолдерами — як впорався?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'How you gathered data to prioritize → used data to align stakeholders → outcome' },
-  { id:53, type:'behavioral', level:'junior', en:'Tell me about a time the business problem was not clearly defined. How did you handle it?', uk:'Бізнес-задача була нечіткою. Як впорався?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'5 Whys to clarify → translated business ask into analytical task → aligned on metric' },
-  { id:54, type:'behavioral', level:'junior', en:'Tell me about a project where you had to clean and organize a large dataset.', uk:'Проект з чищенням великого датасету.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Scale of data → tools used → cleaning steps → how clean data changed the outcome' },
-  { id:55, type:'behavioral', level:'junior', en:'Tell me about a time you failed.', uk:'Розкажи про провал.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Be honest → how you fixed it → lesson learned → process change to prevent recurrence' },
-  { id:56, type:'behavioral', level:'middle', en:'Tell me about a time when you had to make a decision with a lot of uncertainty.', uk:'Рішення в умовах великої невизначеності.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'How you used proxy metrics when direct data was unavailable → risk management' },
-  { id:57, type:'behavioral', level:'middle', en:'Tell me about a time you discovered a trend by drilling into granular data.', uk:'Знайшов тренд через глибокий аналіз даних.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'High-level metrics looked fine → drilled by device/time → found insight: bug or niche' },
-  { id:58, type:'behavioral', level:'junior', en:'Have you ever had to work with poor-quality data or suggest new tracking?', uk:'Робота з неякісними даними або нова система трекінгу.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Problem → cleaning/imputation → new event tracking with engineers → result' },
-  { id:59, type:'behavioral', level:'middle', en:'Tell me about a time you built a dashboard that people actually used.', uk:'Дашборд, яким люди справді користувалися.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Who is the audience → key KPIs → right chart types → user feedback → business impact' },
-  { id:60, type:'behavioral', level:'middle', en:'Describe a time you used data to improve an internal process.', uk:'Як покращив внутрішній процес за допомогою даних.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Operational analytics: dashboard or pipeline automation → hours saved per week' },
-  { id:61, type:'behavioral', level:'middle', en:'Have you ever made a decision based on bad data? What did you learn?', uk:'Рішення на основі поганих даних. Чому навчився?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Fast rollback → lesson: data quality checks → pipeline tests → documentation' },
-  { id:62, type:'behavioral', level:'junior', en:'How do you approach an ambiguous request from a stakeholder?', uk:'Як підходиш до нечіткого запиту від стейкхолдера?', framework:'Process', steps:["Clarify goal","Define metrics","Align on format","Iterate","Deliver"], hint:'Stakeholder interview → why does business need this → agree on success metric' },
-  { id:63, type:'behavioral', level:'middle', en:'What recommendation did you make based on your analysis, and what was the impact?', uk:'Яку рекомендацію дав і який був вплив?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Focus on impact metrics: increased conversion X%, brought business value' },
-  { id:64, type:'behavioral', level:'junior', en:'Why did you choose analytics as a career?', uk:'Чому обрав аналітику?', framework:'Motivational', steps:["Personal story","Business connection","Skills match","Future goals"], hint:'Love for numbers + desire to drive real decisions through objective facts' },
-];
-
-
-function setLang(l) {
-  S.lang = l;
-  document.getElementById('btn-en').style.background = l === 'en' ? 'var(--accent)' : 'var(--bg3)';
-  document.getElementById('btn-uk').style.background = l === 'uk' ? 'var(--accent)' : 'var(--bg3)';
-  if (S.currentQ) renderQuestion();
-}
-
-function selectCat(cat) {
-  S.category = cat;
-  document.querySelectorAll('.cat-tile').forEach(el => el.classList.remove('sel'));
-  document.getElementById('cat-' + cat).classList.add('sel');
-}
-
-function setCategory(cat) {
-  S.category = cat;
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + cat).classList.add('active');
-  document.getElementById('start-screen').style.display = 'none';
-  loadQuestion();
-}
-
-function startSession() {
-  document.getElementById('start-screen').style.display = 'none';
-  loadQuestion();
-}
-
-function loadQuestion() {
-  const p = S.category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.type === S.category);
-  S.currentQ = p[Math.floor(Math.random() * p.length)];
-  renderQuestion();
-}
-
-function renderQuestion() {
-  document.getElementById('q-text').textContent = S.currentQ[S.lang];
-  const stepsEl = document.getElementById('fw-steps');
-  stepsEl.innerHTML = '';
-  S.currentQ.steps.forEach((s, i) => {
-    const span = document.createElement('span');
-    span.className = 'fw-step';
-    span.id = 'fw-' + i;
-    span.textContent = s;
-    stepsEl.appendChild(span);
-  });
-  document.getElementById('feedback-wrap').classList.remove('show');
-  document.getElementById('answer-input').value = '';
-}
-
-function toggleMic() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return alert('Use Chrome');
-  if (S.isRecording) {
-    S.recognition.stop();
-    S.isRecording = false;
-    document.getElementById('mic-btn').classList.remove('recording');
-  } else {
-    S.recognition = new SR();
-    S.recognition.continuous = true;
-    S.recognition.lang = S.lang === 'uk' ? 'uk-UA' : 'en-US';
-    S.recognition.onstart = () => { S.isRecording = true; document.getElementById('mic-btn').classList.add('recording'); };
-    S.recognition.onresult = (e) => {
-      let t = ""; for(let i=0; i<e.results.length; i++) t += e.results[i][0].transcript;
-      document.getElementById('answer-input').value = t;
-      document.getElementById('transcript').textContent = t;
-    };
-    S.recognition.start();
-  }
-}
-
-async function submitAnswer() {
-  const ans = document.getElementById('answer-input').value;
-  if(!ans) return;
-  document.getElementById('submit-btn').disabled = true;
-  try {
-    const res = await fetch('/api/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: `Q: ${S.currentQ.en} Ans: ${ans}` }] }] })
-    });
-    const fb = await res.json();
-    showFeedback(fb);
-  } catch(e) { alert('Error'); }
-  document.getElementById('submit-btn').disabled = false;
-}
-
-function showFeedback(fb) {
-  const wrap = document.getElementById('feedback-wrap');
-  wrap.classList.add('show');
-  
-  const cls = v => v >= 8 ? 'val-hi' : 'val-lo';
-  document.getElementById('score-row').innerHTML = `
-    <div class="score-cell">Structure<br><span class="score-val ${cls(fb.structure)}">${fb.structure}</span></div>
-    <div class="score-cell">Business<br><span class="score-val ${cls(fb.business)}">${fb.business}</span></div>
-    <div class="score-cell">Terms<br><span class="score-val ${cls(fb.terminology)}">${fb.terminology}</span></div>
-    <div class="score-cell">Loop<br><span class="score-val">${fb.closesLoop}</span></div>
-  `;
-
-  document.getElementById('feedback-body').innerHTML = `
-    <div style="margin-bottom:10px"><strong>✓ Good:</strong> ${fb.good}</div>
-    <div style="margin-bottom:10px"><strong>△ Missing:</strong> ${fb.missing}</div>
-    ${fb.idealAnswer ? `
-      <div style="margin-top:15px; padding:12px; background:rgba(0,184,148,0.1); border:1px solid rgba(0,184,148,0.2); border-radius:8px;">
-        <strong style="color:var(--green); display:block; margin-bottom:5px; font-size:11px; text-transform:uppercase;">Ideal Answer</strong>
-        <div style="color:var(--text2); line-height:1.6;">${fb.idealAnswer}</div>
-      </div>` : ''}
-  `;
-
-  if (fb.completedSteps) {
-    S.currentQ.steps.forEach((s, i) => {
-      const el = document.getElementById('fw-' + i);
-      if (el && fb.completedSteps.some(cs => cs.toLowerCase().includes(s.toLowerCase()))) el.className = 'fw-step done';
-    });
-  }
-}
-</script>
-</body>
-</html>
+      <div class="nav-label">Practice</div>
+      <div class="nav-item active" id="nav-all" onclick="setCategory('all')">All Questions <span class="nav-count" id="cnt-all">0
