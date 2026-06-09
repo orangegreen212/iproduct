@@ -42,6 +42,8 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .score-row { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); background: var(--bg2); border-radius: var(--r) var(--r) 0 0; }
 .score-cell { padding: 12px; text-align: center; border-right: 1px solid var(--border); }
 .score-val { font-size: 18px; font-weight: 700; }
+.val-hi { color: var(--green); }
+.val-lo { color: var(--red); }
 .feedback-body { background: var(--bg2); border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--r) var(--r); padding: 15px; font-size: 13px; }
 .controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--bg2); display: flex; gap: 10px; align-items: flex-end; }
 .mic-btn { width: 48px; height: 48px; border-radius: 50%; background: var(--bg3); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -58,7 +60,320 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-head"><div class="logo">Interview Trainer</div><div class="logo-sub">Revenue · Product · Data</div></div>
+    <div class="sidebar-head"><div class="logo">Interview Trainer</div></div>
     <div class="nav-group">
       <div class="nav-label">Practice</div>
-      <div class="nav-item active" id="nav-all" onclick="setCategory('all')">All Questions <span class="nav-count" id="cnt-all">0
+      <div class="nav-item active" id="nav-all" onclick="setCategory('all')">⚡ All Questions <span class="nav-count" id="cnt-all">0</span></div>
+      <div class="nav-item" id="nav-sql" onclick="setCategory('sql')">🗄 SQL / Python <span class="nav-count" id="cnt-sql">0</span></div>
+      <div class="nav-item" id="nav-product" onclick="setCategory('product')">💡 Product Cases <span class="nav-count" id="cnt-product">0</span></div>
+      <div class="nav-item" id="nav-behavioral" onclick="setCategory('behavioral')">🎯 Behavioral <span class="nav-count" id="cnt-behavioral">0</span></div>
+      <div class="nav-item" id="nav-term" onclick="setCategory('term')">📖 Terminology <span class="nav-count" id="cnt-term">0</span></div>
+    </div>
+    <div class="nav-group">
+        <div class="nav-label">Level</div>
+        <div class="nav-item" id="nav-junior" onclick="setCategory('junior')">Junior+</div>
+        <div class="nav-item" id="nav-middle" onclick="setCategory('middle')">Middle</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div id="start-screen" class="start-screen">
+      <h1 class="start-title">Ready to practice?</h1>
+      <div class="cat-grid">
+        <div class="cat-tile sel" id="cat-all" onclick="selectCat('all')"><div class="cat-tile-name">All</div></div>
+        <div class="cat-tile" id="cat-sql" onclick="selectCat('sql')"><div class="cat-tile-name">SQL</div></div>
+        <div class="cat-tile" id="cat-product" onclick="selectCat('product')"><div class="cat-tile-name">Product</div></div>
+        <div class="cat-tile" id="cat-term" onclick="selectCat('term')"><div class="cat-tile-name">Terms</div></div>
+      </div>
+      <button class="btn-start" onclick="startSession()">Start Session →</button>
+    </div>
+
+    <div class="topbar">
+      <div id="session-title">Session</div>
+      <div style="flex:1"></div>
+      <div class="lang-tog">
+        <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" id="btn-uk" onclick="setLang('uk')">УК</button>
+      </div>
+      <button onclick="location.reload()" style="background:none; border:none; color:var(--text3); cursor:pointer; margin-left:15px;">✕ End</button>
+    </div>
+
+    <div class="session" id="session">
+      <div class="q-card">
+        <span class="q-badge" id="q-badge">SQL</span>
+        <div id="q-text" style="font-size:18px; font-weight:500;">Loading...</div>
+      </div>
+      <div class="fw-bar"><div class="nav-label" id="fw-label">Framework</div><div id="fw-steps"></div></div>
+      <div class="transcript" id="transcript">Transcript...</div>
+      <div id="feedback-wrap" class="feedback-wrap">
+        <div class="feedback-card">
+          <div class="score-row" id="score-row"></div>
+          <div class="feedback-body" id="feedback-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="mic-btn" id="mic-btn" onclick="toggleMic()">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+      </div>
+      <textarea id="answer-input" class="answer-input" placeholder="Speak or type..."></textarea>
+      <button id="submit-btn" class="submit-btn" onclick="submitAnswer()">Evaluate</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// === ПОМЕТКА: ТУТ БУДУТ ВОПРОСЫ (ЧАСТЬ 2) ===
+const QUESTIONS = [
+  { id:1, type:'sql', level:'junior', en:'Find the 7-day conversion rate. Explain your logic step by step — no code needed.', uk:'Знайди 7-денну конверсію. Поясни логіку крок за кроком, код не потрібен.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'Start: first I define grain — user-level or order-level?' },
+  { id:2, type:'sql', level:'junior', en:'Calculate average order value per user for the last 30 days. Walk me through the SQL logic.', uk:'Порахуй середній чек на користувача за 30 днів. Поясни SQL логіку.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'SUM(revenue) / COUNT(orders) — or per-user aggregation first?' },
+  { id:3, type:'sql', level:'junior', en:'Funnel analysis: signup → login → first purchase. How do you calculate step-by-step conversion?', uk:'Воронка: реєстрація → логін → перша покупка. Як рахуєш конверсію кожного кроку?', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'GROUP BY step, COUNT DISTINCT users at each step' },
+  { id:4, type:'sql', level:'junior', en:'Find Day-7 retention. What tables, what logic?', uk:'Day-7 retention. Які таблиці, яка логіка?', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'MIN(event_date) per user → check if active on day 7' },
+  { id:5, type:'sql', level:'middle', en:'Find users who made a second purchase within 30 days of their first.', uk:'Знайди юзерів з другою покупкою впродовж 30 днів після першої.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'ROW_NUMBER() per user → LAG or self-join for time diff' },
+  { id:6, type:'sql', level:'middle', en:'Two dashboards show different revenue for the same month. How do you debug it?', uk:'Два дашборди — різний дохід за той самий місяць. Як дебажиш?', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'Check: grain, filters, date truncation, JOIN duplicates' },
+  { id:7, type:'sql', level:'middle', en:'Calculate MoM revenue growth rate by channel using window functions.', uk:'MoM зростання доходу по каналах. Використай window functions.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'DATE_TRUNC + LAG(revenue) OVER (PARTITION BY channel ORDER BY month)' },
+  { id:8, type:'sql', level:'middle', en:'Top 3 revenue products per country — handle ties correctly.', uk:'Топ-3 продукти за доходом по країнах — правильно обробити ties.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'RANK() vs DENSE_RANK() vs ROW_NUMBER() — which one for ties?' },
+  { id:9, type:'sql', level:'junior', en:'How do you detect and remove duplicate rows? Explain the approach.', uk:'Як знайти та видалити дублікати? Поясни підхід.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'ROW_NUMBER() OVER (PARTITION BY key_cols ORDER BY date) — keep rn=1' },
+  { id:10, type:'sql', level:'middle', en:'Build a cohort retention table in Python with pandas. Walk through your steps.', uk:'Побудуй cohort retention таблицю в Python з pandas.', framework:'Python Pipeline', steps:["Load & inspect","Clean data","Define cohort","Calculate","Visualize"], hint:'parse dates → cohort_month → pivot → divide by cohort size' },
+  { id:11, type:'sql', level:'middle', en:'Run an A/B test analysis in Python. Which statistical test and why?', uk:'A/B тест аналіз у Python. Який статистичний тест і чому?', framework:'Python Pipeline', steps:["Load & inspect","Clean data","Define cohort","Calculate","Visualize"], hint:'t-test for means, chi-square for proportions — state H0 first' },
+  { id:12, type:'sql', level:'junior', en:'Analyze revenue by device type and country. Walk through your approach.', uk:'Аналіз доходу по типу пристрою та країні.', framework:'SQL Thinking', steps:["Define grain","Identify event","Choose method","Build logic","Business answer"], hint:'GROUP BY device, country — think about NULLs and sort order' },
+  { id:13, type:'product', level:'junior', en:'Revenue dropped 18% WoW. Traffic is stable. Walk me through your investigation.', uk:'Дохід впав на 18% WoW. Трафік стабільний. Поясни розслідування.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Revenue = Traffic x CR x AOV. Traffic stable → focus on CR and AOV' },
+  { id:14, type:'product', level:'junior', en:'Conversion dropped from 5% to 3.8%. No releases reported. What do you do?', uk:'Конверсія впала з 5% до 3.8%. Релізів не було. Що робиш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment by device, browser, country, channel. Check error logs.' },
+  { id:15, type:'product', level:'junior', en:'Traffic up 30%, revenue flat. Explain what happened.', uk:'Трафік +30%, дохід не змінився. Поясни що сталося.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Traffic quality? Bots? Lower-intent users? AOV drop? Discount spike?' },
+  { id:16, type:'product', level:'junior', en:'Monthly churn increased from 4% to 7%. How do you investigate?', uk:'Churn виріс з 4% до 7%. Як розслідуєш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment by cohort, plan, acquisition channel, usage level' },
+  { id:17, type:'product', level:'middle', en:'Revenue up and churn up after a pricing change. Analyze the trade-off.', uk:'Після зміни цін дохід виріс і churn виріс. Аналізуй trade-off.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Who pays more? Who leaves? Short-term vs long-term revenue' },
+  { id:18, type:'product', level:'junior', en:'A new dashboard has 10% adoption after 2 months. Why, and what do you do?', uk:'Новий дашборд — 10% adoption через 2 місяці. Чому і що робиш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'5 barriers: Awareness, Relevance, Usability, Trust, Substitution' },
+  { id:19, type:'product', level:'middle', en:'AOV increased but total revenue decreased. Explain possible reasons.', uk:'AOV виріс, але загальний дохід впав. Поясни причини.', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Volume dropped more than AOV increased — why did order count fall?' },
+  { id:20, type:'product', level:'middle', en:'After checkout redesign: add-to-cart stable, checkout completion -15%. What do you do?', uk:'Після редизайну: add-to-cart стабільний, checkout completion -15%. Що робиш?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment by device, payment method. Check UX changes and error rates.' },
+  { id:21, type:'product', level:'middle', en:'MRR is stable but engagement is declining. Is this a problem?', uk:'MRR стабільний, але engagement падає. Це проблема?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'MRR = lagging indicator. Engagement = leading indicator of future churn.' },
+  { id:22, type:'product', level:'middle', en:'How would you increase revenue 20% next quarter? What levers?', uk:'Як збільшити дохід на 20% за квартал? Які важелі?', framework:'MECE Revenue', steps:["Acquisition","Retention","Expansion","Prioritize","Recommend"], hint:'Revenue = Acquisition + Retention + Expansion. Which has highest ROI?' },
+  { id:31, type:'product', level:'junior', en:'55% of users do not complete the application. Why do you think this is the case and how would you investigate?', uk:'55% користувачів не завершують заявку. Чому і як розслідуєш?', framework:'RCA', steps:["Clarify baseline","Internal factors","External factors","Hypothesize","Validate"], hint:'Is this sudden or always? Check UX steps, form length, bugs, mobile vs desktop' },
+  { id:32, type:'product', level:'junior', en:'There is a YoY slowdown in transactions. How would you structure your analysis?', uk:'Річне сповільнення транзакцій. Як структуруєш аналіз?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Clarify which transaction type. Segment by geo, device, user type, external factors' },
+  { id:33, type:'product', level:'middle', en:'How would you determine if Messenger should introduce group calling?', uk:'Як визначити чи варто Messenger запустити групові дзвінки?', framework:'Product Sense', steps:["Clarify goal","Define audience","Success metrics","A/B test design","Risks"], hint:'Business goal → target users → primary metric → cannibalization risk' },
+  { id:34, type:'product', level:'middle', en:'For a social media app, how would you analyze whether content from friends or strangers drives higher engagement?', uk:'Контент від друзів чи чужих — що краще для engagement?', framework:'Experiment Design', steps:["Define engagement","Split sample","Primary metric","Secondary metric","Conclude"], hint:'Define engagement first: time spent, comments, shares? Then A/B test with holdout' },
+  { id:35, type:'product', level:'middle', en:'A new app shows 25% drop-off at sign-up. How do you analyze this?', uk:'Новий додаток — 25% відвалу при реєстрації. Як аналізуєш?', framework:'RCA', steps:["Clarify baseline","Internal factors","External factors","Hypothesize","Validate"], hint:'Split by platform iOS/Android → funnel steps → API errors → UX issues' },
+  { id:36, type:'product', level:'junior', en:'What metrics would you use to increase posts with comments in a group?', uk:'Які метрики для збільшення постів з коментарями в групі?', framework:'AARM', steps:["Acquisition","Activation","Retention","Monetization"], hint:'Engagement metrics for content creators + commenters + guardrail: spam rate' },
+  { id:37, type:'product', level:'middle', en:'How would you evaluate whether a new feature is worth rolling out to all users?', uk:'Як оцінити чи варто розгортати нову фічу на всіх?', framework:'A/B Framework', steps:["Hypothesis","Success metrics","Statistical significance","Business impact","Decision"], hint:'North Star + guardrail metrics → p-value → business ROI → rollout decision' },
+  { id:38, type:'product', level:'junior', en:'How would you analyze why user engagement is declining?', uk:'Як аналізувати падіння engagement?', framework:'VDSHV', steps:["Validate","Decompose","Segment","Hypothesize","Validate hyp."], hint:'Segment new vs returning users → cohort analysis → product releases → seasonality' },
+  { id:39, type:'product', level:'middle', en:'Adoption is high but retention is low — how would you diagnose and communicate this?', uk:'Adoption високий, retention низький — як діагностуєш і комунікуєш?', framework:'Leaky Bucket', steps:["Validate","Time-to-value","Day 1/7 dropoff","Segment","BLUF to leadership"], hint:'Users come but product does not deliver value → analyze time-to-value → D1/D7 churn' },
+  { id:40, type:'product', level:'junior', en:'How would you measure the success of a new onboarding flow?', uk:'Як виміряєш успіх нового onboarding flow?', framework:'Metrics Framework', steps:["Clarify goal","Primary metric","Feature metrics","Guardrail metrics","Decision"], hint:'Goal → primary metric → adoption rate → guardrail: churn, NPS' },
+  { id:41, type:'product', level:'middle', en:'After launching a recommendation engine, how would you measure its impact on revenue?', uk:'Після запуску recommendation engine — як міряєш вплив на дохід?', framework:'A/B Framework', steps:["Hypothesis","Success metrics","Statistical significance","Business impact","Decision"], hint:'A/B test: CTR → add-to-cart → AOV and conversion uplift' },
+  { id:42, type:'product', level:'junior', en:'We are considering launching in a new city. What data would you look at?', uk:'Розглядаємо запуск у новому місті. Які дані вивчиш?', framework:'Market Analysis', steps:["TAM/SAM","Unit economics","Competitors","Infrastructure","Legal"], hint:'TAM → unit economics of similar city → CAC estimate → logistics infrastructure' },
+  { id:43, type:'product', level:'middle', en:'A competitor is gaining market share. How would you investigate why?', uk:'Конкурент набирає частку ринку. Як розслідуєш?', framework:'Competitive Analysis', steps:["Product features","Pricing","Sentiment","Marketing","Recommendation"], hint:'AppStore reviews → pricing comparison → SimilarWeb traffic → feature gaps' },
+  { id:44, type:'product', level:'middle', en:'You are launching a new feature — how would you measure its strategic impact on growth?', uk:'Запускаєш нову фічу — як міряєш стратегічний вплив на зростання?', framework:'Growth Metrics', steps:["Clarify goal","Incremental growth","A/B holdout","LTV impact","Cannibalization"], hint:'Incremental lift via A/B holdout → activation + LTV + cannibalization check' },
+  { id:45, type:'product', level:'junior', en:'What KPIs would you track to evaluate the health of a subscription-based business?', uk:'Які KPI для здоров\'я subscription бізнесу?', framework:'SaaS Metrics', steps:["Revenue","Churn","Acquisition","Lifetime value","Ratio"], hint:'MRR/ARR → churn rate → CAC → LTV → LTV:CAC ratio' },
+  { id:46, type:'product', level:'middle', en:'How would you visualize sales and customer usage data for executives?', uk:'Як візуалізуєш дані продажів і використання продукту для керівництва?', framework:'Dashboard Design', steps:["Clarify audience","Key KPIs","Chart types","Drill-downs","Insights"], hint:'Who is the audience → line charts for trends, cohorts for retention → top KPIs first' },
+  { id:47, type:'product', level:'junior', en:'How would you model the expected ROI of a new product launch?', uk:'Як змоделювати очікуваний ROI нового продукту?', framework:'ROI Model', steps:["Clarify timeline","Revenue estimate","Cost estimate","ROI formula","Sensitivity"], hint:'Conversion funnel x LTV for revenue; CAPEX + OPEX for costs; ROI = (Revenue - Cost) / Cost' },
+  { id:48, type:'product', level:'middle', en:'How would you evaluate the ROI of a strategic bet or initiative?', uk:'Як оцінюєш ROI стратегічної ставки?', framework:'ROI Model', steps:["Clarify timeline","Revenue estimate","Cost estimate","ROI formula","Sensitivity"], hint:'Costs: CAPEX + OPEX + opportunity cost. Returns: direct revenue + indirect (retention)' },
+  { id:49, type:'product', level:'junior', en:'A marketing campaign underperformed. What would you do?', uk:'Маркетингова кампанія недопрацювала. Що робиш?', framework:'RCA', steps:["Clarify baseline","Funnel breakdown","Segment","Hypothesize","Validate"], hint:'Impressions → clicks → signups → purchases. Compare with historical cohorts. Bad creative? Wrong audience?' },
+  { id:50, type:'product', level:'middle', en:'How would you test the impact of expanding into a new international market?', uk:'Як тестуєш вплив виходу на новий міжнародний ринок?', framework:'Geo Test', steps:["Select proxy market","Launch MVP","Measure CAC/LTV","Compare to forecast","Decision"], hint:'Choose similar market as control → measure CAC, LTV, logistics metrics → vs forecast' },
+  { id:23, type:'behavioral', level:'junior', en:'Tell me about a mistake you made in your analysis or reporting.', uk:'Розкажи про помилку в аналізі або звітності.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Show: found root cause → fixed process → prevented recurrence' },
+  { id:24, type:'behavioral', level:'junior', en:'Tell me about a time your analysis changed a business decision.', uk:'Коли твій аналіз змінив бізнес-рішення.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Quantify the impact. Decision before vs after your analysis.' },
+  { id:25, type:'behavioral', level:'junior', en:'Describe a disagreement with a stakeholder about data or metrics.', uk:'Незгода зі стейкхолдером щодо даних або метрик.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Validated first → found mismatch type → aligned on definitions' },
+  { id:26, type:'behavioral', level:'junior', en:'Tell me about explaining a complex analysis to a non-technical audience.', uk:'Як пояснював складний аналіз нетехнічній аудиторії.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Adapted level, used visuals, focused on business impact not method' },
+  { id:27, type:'behavioral', level:'middle', en:'Tell me about your greatest impact on a business metric.', uk:'Найбільший вплив на бізнес-метрику.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Be specific: which metric, by how much, over what timeframe' },
+  { id:28, type:'behavioral', level:'middle', en:'Describe working with incomplete or messy data.', uk:'Робота з неповними або брудними даними.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Validated assumptions, documented limits, communicated uncertainty' },
+  { id:29, type:'behavioral', level:'middle', en:'A project where you balanced speed vs accuracy in analysis.', uk:'Проект де балансував швидкість і точність аналізу.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Context of urgency, what you traded off, what you communicated' },
+  { id:30, type:'behavioral', level:'middle', en:'When you proactively identified a problem before it was reported.', uk:'Коли проактивно знайшов проблему до того як її повідомили.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Monitoring habit, pattern recognition, escalation, impact prevented' },
+  { id:51, type:'behavioral', level:'junior', en:'What is the project you are most proud of?', uk:'Яким проектом ти найбільше пишаєшся?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Context → your specific role → analytical steps taken → business impact with metrics' },
+  { id:52, type:'behavioral', level:'junior', en:'Tell me about a time you had to deal with conflicting priorities with stakeholders.', uk:'Конфліктні пріоритети зі стейкхолдерами — як впорався?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'How you gathered data to prioritize → used data to align stakeholders → outcome' },
+  { id:53, type:'behavioral', level:'junior', en:'Tell me about a time the business problem was not clearly defined. How did you handle it?', uk:'Бізнес-задача була нечіткою. Як впорався?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'5 Whys to clarify → translated business ask into analytical task → aligned on metric' },
+  { id:54, type:'behavioral', level:'junior', en:'Tell me about a project where you had to clean and organize a large dataset.', uk:'Проект з чищенням великого датасету.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Scale of data → tools used → cleaning steps → how clean data changed the outcome' },
+  { id:55, type:'behavioral', level:'junior', en:'Tell me about a time you failed.', uk:'Розкажи про провал.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Be honest → how you fixed it → lesson learned → process change to prevent recurrence' },
+  { id:56, type:'behavioral', level:'middle', en:'Tell me about a time when you had to make a decision with a lot of uncertainty.', uk:'Рішення в умовах великої невизначеності.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'How you used proxy metrics when direct data was unavailable → risk management' },
+  { id:57, type:'behavioral', level:'middle', en:'Tell me about a time you discovered a trend by drilling into granular data.', uk:'Знайшов тренд через глибокий аналіз даних.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'High-level metrics looked fine → drilled by device/time → found insight: bug or niche' },
+  { id:58, type:'behavioral', level:'junior', en:'Have you ever had to work with poor-quality data or suggest new tracking?', uk:'Робота з неякісними даними або нова система трекінгу.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Problem → cleaning/imputation → new event tracking with engineers → result' },
+  { id:59, type:'behavioral', level:'middle', en:'Tell me about a time you built a dashboard that people actually used.', uk:'Дашборд, яким люди справді користувалися.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Who is the audience → key KPIs → right chart types → user feedback → business impact' },
+  { id:60, type:'behavioral', level:'middle', en:'Describe a time you used data to improve an internal process.', uk:'Як покращив внутрішній процес за допомогою даних.', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Operational analytics: dashboard or pipeline automation → hours saved per week' },
+  { id:61, type:'behavioral', level:'middle', en:'Have you ever made a decision based on bad data? What did you learn?', uk:'Рішення на основі поганих даних. Чому навчився?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Fast rollback → lesson: data quality checks → pipeline tests → documentation' },
+  { id:62, type:'behavioral', level:'junior', en:'How do you approach an ambiguous request from a stakeholder?', uk:'Як підходиш до нечіткого запиту від стейкхолдера?', framework:'Process', steps:["Clarify goal","Define metrics","Align on format","Iterate","Deliver"], hint:'Stakeholder interview → why does business need this → agree on success metric' },
+  { id:63, type:'behavioral', level:'middle', en:'What recommendation did you make based on your analysis, and what was the impact?', uk:'Яку рекомендацію дав і який був вплив?', framework:'STAR', steps:["Situation","Task","Action","Result"], hint:'Focus on impact metrics: increased conversion X%, brought business value' },
+  { id:64, type:'behavioral', level:'junior', en:'Why did you choose analytics as a career?', uk:'Чому обрав аналітику?', framework:'Motivational', steps:["Personal story","Business connection","Skills match","Future goals"], hint:'Love for numbers + desire to drive real decisions through objective facts' },
+   { id:201, type:'term', level:'junior', en:'What is Conversion Rate?', uk:'Що таке коефіцієнт конверсії (Conversion Rate)?', framework:'Term Definition', steps:["Definition","Formula","Business Value","Example"], hint:'Total actions / Total visitors.' },
+  { id:202, type:'term', level:'junior', en:'What is Revenue?', uk:'Що таке виручка (Revenue)?', framework:'Term Definition', steps:["Definition","Gross vs Net","Importance","Example"], hint:'Total money coming in.' },
+  { id:203, type:'term', level:'junior', en:'What is LTV (Lifetime Value)?', uk:'Що таке LTV?', framework:'Term Definition', steps:["Definition","Calculation","Retention link","LTV:CAC ratio"], hint:'Total profit from one customer.' },
+  { id:204, type:'term', level:'junior', en:'What is CAC (Customer Acquisition Cost)?', uk:'Що таке CAC?', framework:'Term Definition', steps:["Definition","Formula","Optimization","Example"], hint:'Cost to get one new customer.' },
+  { id:205, type:'term', level:'junior', en:'What is Churn Rate?', uk:'Що таке Churn Rate?', framework:'Term Definition', steps:["Definition","Formula","Impact on LTV","Prevention"], hint:'Percentage of users who leave.' },
+  { id:206, type:'term', level:'junior', en:'What is ARPU (Average Revenue Per User)?', uk:'Що таке ARPU?', framework:'Term Definition', steps:["Definition","Formula","Use cases","Segments"], hint:'Revenue divided by total users.' },
+  { id:207, type:'term', level:'junior', en:'What is MRR (Monthly Recurring Revenue)?', uk:'Що таке MRR?', framework:'Term Definition', steps:["Definition","Importance for SaaS","Growth tracking","Example"], hint:'Predictable monthly revenue.' },
+  { id:208, type:'term', level:'middle', en:'What is p-value?', uk:'Що таке p-value?', framework:'Stats', steps:["Intuition","Threshold","Mistakes","Business risk"], hint:'Probability of getting results by chance.' },
+  { id:209, type:'term', level:'middle', en:'What is Statistical Significance?', uk:'Що таке статистична значущість?', framework:'Stats', steps:["Definition","A/B testing link","Sample size","Decision making"], hint:'Are the results real or random?' },
+  { id:210, type:'term', level:'junior', en:'What is a Cohort?', uk:'Що таке когорта?', framework:'Analytics', steps:["Definition","Time-based","Segment-based","Use case"], hint:'Group of users sharing a common trait.' },
+  { id:211, type:'term', level:'junior', en:'What is Retention?', uk:'Що таке Retention?', framework:'Term Definition', steps:["Definition","D1/D7/D30","Stickiness","Curve"], hint:'Ability to keep users coming back.' },
+  { id:212, type:'term', level:'middle', en:'What is Unit Economics?', uk:'Що таке юніт-економіка?', framework:'Business Math', steps:["Definition","Unit of value","LTV & CAC","Sustainability"], hint:'Profitability of a single customer.' },
+  { id:213, type:'term', level:'middle', en:'What is ROI (Return on Investment)?', uk:'Що таке ROI?', framework:'Term Definition', steps:["Formula","Interpretation","Timeframe","Example"], hint:'(Gain - Cost) / Cost.' },
+  { id:214, type:'term', level:'junior', en:'What is MAU (Monthly Active Users)?', uk:'Що таке MAU?', framework:'Metrics', steps:["Definition","Active criteria","Engagement link","Benchmark"], hint:'Unique users in 30 days.' },
+  { id:215, type:'term', level:'middle', en:'What is Cannibalization?', uk:'Що таке канібалізація?', framework:'Product Sense', steps:["Definition","A/B testing","Revenue impact","Example"], hint:'One product stealing from another.' },
+  { id:216, type:'term', level:'junior', en:'What is GMV (Gross Merchandise Value)?', uk:'Що таке GMV?', framework:'Term Definition', steps:["Definition","Revenue diff","Marketplace context","Example"], hint:'Total value of goods sold.' },
+  { id:217, type:'term', level:'middle', en:'What is a Guardrail Metric?', uk:'Що таке Guardrail Metric?', framework:'A/B Testing', steps:["Definition","Purpose","Example","Decision"], hint:'Metric you should not break while optimizing another.' },
+  { id:218, type:'term', level:'junior', en:'What is CTR (Click-Through Rate)?', uk:'Що таке CTR?', framework:'Term Definition', steps:["Formula","Funnel stage","Benchmarks","Optimization"], hint:'Clicks / Impressions.' },
+  { id:219, type:'term', level:'junior', en:'What is AOV (Average Order Value)?', uk:'Що таке AOV (середній чек)?', framework:'Term Definition', steps:["Definition","Levers to increase","Revenue link","Example"], hint:'Total Revenue / Total Orders.' },
+  { id:220, type:'term', level:'middle', en:'What is TAM (Total Addressable Market)?', uk:'Що таке TAM?', framework:'Market Sizing', steps:["Definition","SAM & SOM link","Growth potential","Example"], hint:'Total global demand.' },
+  { id:221, type:'term', level:'junior', en:'What is Stickiness?', uk:'Що таке Stickiness?', framework:'Product', steps:["DAU/MAU ratio","Engagement","Value frequency","Benchmarks"], hint:'How often users return.' },
+  { id:222, type:'term', level:'junior', en:'What is a North Star Metric?', uk:'Що таке North Star Metric?', framework:'Strategy', steps:["Definition","Selection criteria","Alignment","Examples"], hint:'The one metric that best captures value.' },
+  { id:223, type:'term', level:'middle', en:'What is a Payback Period?', uk:'Що таке період окупності?', framework:'Economics', steps:["Definition","CAC link","Cash flow","Risk"], hint:'Time to recover CAC from a user.' },
+  { id:224, type:'term', level:'junior', en:'What is Bounce Rate?', uk:'Що таке Bounce Rate?', framework:'Term Definition', steps:["Definition","UX link","Context","Improvement"], hint:'Single-page sessions / Total sessions.' },
+  { id:225, type:'term', level:'middle', en:'What is Customer Lifetime?', uk:'Що таке життєвий цикл клієнта?', framework:'Analytics', steps:["Definition","Churn link","LTV calculation","Stages"], hint:'Average time a user stays with you.' },
+  { id:226, type:'term', level:'junior', en:'What is Data Grain?', uk:'Що таке зернистість (Grain) даних?', framework:'SQL', steps:["Definition","Aggregation","Joins impact","Examples"], hint:'The level of detail in a table.' },
+  { id:227, type:'term', level:'middle', en:'What is Seasonality?', uk:'Що таке сезонність?', framework:'Analysis', steps:["Definition","Deseasonalization","Forecasting","Examples"], hint:'Regular fluctuations at set intervals.' },
+  { id:228, type:'term', level:'junior', en:'What is a Funnel?', uk:'Що таке воронка?', framework:'Analytics', steps:["Stages","Conversion","Drop-off","Optimization"], hint:'User journey steps.' },
+  { id:229, type:'term', level:'middle', en:'What is ROAS (Return on Ad Spend)?', uk:'Що таке ROAS?', framework:'Marketing', steps:["Formula","ROI diff","Scaling","Example"], hint:'Revenue from ads / Ad cost.' },
+  { id:230, type:'term', level:'junior', en:'What is Gross Margin?', uk:'Що таке валова маржа?', framework:'Finance', steps:["Definition","Formula","Unit economics link","Benchmarks"], hint:'(Revenue - COGS) / Revenue.' },
+  { id:231, type:'term', level:'middle', en:'What is Simpson’s Paradox?', uk:'Що таке парадокс Сімпсона?', framework:'Stats', steps:["Intuition","Example","Dangers","Segment analysis"], hint:'Trend in groups disappears when combined.' },
+  { id:232, type:'term', level:'junior', en:'What is a KPI?', uk:'Що таке KPI?', framework:'Business', steps:["Definition","Selection","Tracking","Example"], hint:'Key Performance Indicator.' },
+  { id:233, type:'term', level:'middle', en:'What is Lead Scoring?', uk:'Що таке Lead Scoring?', framework:'Sales', steps:["Definition","Data inputs","Sales alignment","Efficiency"], hint:'Ranking prospects by readiness to buy.' },
+  { id:234, type:'term', level:'junior', en:'What is an Event?', uk:'Що таке івент (подія)?', framework:'Analytics', steps:["Definition","Properties","Tracking","Examples"], hint:'Action a user takes in the product.' },
+  { id:235, type:'term', level:'middle', en:'What is Confidence Interval?', uk:'Що таке довірчий інтервал?', framework:'Stats', steps:["Intuition","Margin of error","Significance link","Interpretation"], hint:'Range where the true value likely lies.' },
+  { id:236, type:'term', level:'junior', en:'What is Upselling?', uk:'Що таке апсейл?', framework:'Revenue', steps:["Definition","LTV impact","Cross-sell diff","Example"], hint:'Selling a more expensive version.' },
+  { id:237, type:'term', level:'middle', en:'What is Net Promoter Score (NPS)?', uk:'Що таке NPS?', framework:'Feedback', steps:["Survey","Calculation","Retention link","Action"], hint:'Loyalty metric: Promoters - Detractors.' },
+  { id:238, type:'term', level:'junior', en:'What is Churn Prevention?', uk:'Що таке запобігання відтоку?', framework:'Retention', steps:["Detection","Action","Segments","Outcome"], hint:'Proactive steps to keep users.' },
+  { id:239, type:'term', level:'middle', en:'What is a Correlation?', uk:'Що таке кореляція?', framework:'Analysis', steps:["Definition","Vs Causation","r coefficient","Danger"], hint:'Relationship between two variables.' },
+  { id:240, type:'term', level:'junior', en:'What is User Segmentation?', uk:'Що таке сегментація користувачів?', framework:'Analytics', steps:["Definition","Types","Personalization","Insights"], hint:'Dividing users into meaningful groups.' },
+
+];
+
+window.S = {
+  lang: 'en', category: 'all', currentQ: null, isRecording: false, recognition: null,
+  stats: { done: 0, total: 0 }
+};
+
+window.setLang = function(l) {
+  S.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.id === 'btn-' + l));
+  if (S.currentQ) renderQuestion();
+};
+
+window.selectCat = function(cat) {
+  S.category = cat;
+  document.querySelectorAll('.cat-tile').forEach(el => el.classList.toggle('sel', el.id === 'cat-' + cat));
+};
+
+window.setCategory = function(cat) {
+  S.category = cat;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.id === 'nav-' + cat));
+  document.getElementById('start-screen').style.display = 'none';
+  loadQuestion();
+};
+
+window.startSession = function() {
+  document.getElementById('start-screen').style.display = 'none';
+  loadQuestion();
+};
+
+window.loadQuestion = function() {
+  const p = S.category === 'all' ? QUESTIONS : 
+            (S.category === 'junior' || S.category === 'middle') ? QUESTIONS.filter(q => q.level === S.category) :
+            QUESTIONS.filter(q => q.type === S.category);
+  
+  if (p.length === 0) return alert("No questions found");
+  S.currentQ = p[Math.floor(Math.random() * p.length)];
+  renderQuestion();
+};
+
+function renderQuestion() {
+  const q = S.currentQ;
+  document.getElementById('q-text').textContent = q[S.lang] || q.en;
+  document.getElementById('q-badge').textContent = q.type.toUpperCase();
+  document.getElementById('fw-label').textContent = q.framework || "Framework";
+  
+  const stepsEl = document.getElementById('fw-steps');
+  stepsEl.innerHTML = '';
+  if (q.steps) {
+      q.steps.forEach((s, i) => {
+        const span = document.createElement('span');
+        span.className = 'fw-step';
+        span.id = 'fw-' + i;
+        span.textContent = s;
+        stepsEl.appendChild(span);
+      });
+  }
+  
+  document.getElementById('feedback-wrap').classList.remove('show');
+  document.getElementById('answer-input').value = '';
+  document.getElementById('transcript').textContent = S.lang === 'en' ? "Listening..." : "Слухаю...";
+}
+
+window.toggleMic = function() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return alert('Use Chrome/Edge');
+
+  if (S.isRecording) {
+    S.recognition.stop();
+    S.isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+  } else {
+    S.recognition = new SR();
+    S.recognition.continuous = true;
+    S.recognition.interimResults = true;
+    S.recognition.lang = S.lang === 'uk' ? 'uk-UA' : 'en-US';
+    S.recognition.onstart = () => { S.isRecording = true; document.getElementById('mic-btn').classList.add('recording'); };
+    S.recognition.onresult = (e) => {
+      let t = ""; for(let i=0; i<e.results.length; i++) t += e.results[i][0].transcript;
+      document.getElementById('answer-input').value = t;
+      document.getElementById('transcript').textContent = t;
+    };
+    S.recognition.start();
+  }
+};
+
+window.submitAnswer = async function() {
+  const ans = document.getElementById('answer-input').value;
+  if(!ans) return;
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = "...";
+
+  try {
+    const res = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: `Evaluate this ${S.currentQ.type} answer for "${S.currentQ.en}": "${ans}"` }] }] })
+    });
+    const fb = await res.json();
+    showFeedback(fb);
+  } catch(e) { alert('API Error'); }
+  
+  btn.disabled = false; btn.textContent = "Evaluate";
+};
+
+function showFeedback(fb) {
+  document.getElementById('feedback-wrap').classList.add('show');
+  const cls = v => v >= 8 ? 'val-hi' : 'val-lo';
+  
+  document.getElementById('score-row').innerHTML = `
+    <div class="score-cell">STRUCT<br><span class="score-val ${cls(fb.structure)}">${fb.structure}</span></div>
+    <div class="score-cell">BIZ<br><span class="score-val ${cls(fb.business)}">${fb.business}</span></div>
+    <div class="score-cell">TERMS<br><span class="score-val ${cls(fb.terminology)}">${fb.terminology}</span></div>
+    <div class="score-cell">LOOP<br><span class="score-val">${fb.closesLoop}</span></div>
+  `;
+
+  document.getElementById('feedback-body').innerHTML = `
+    <div style="margin-bottom:10px"><strong>Good:</strong> ${fb.good}</div>
+    <div style="margin-bottom:10px"><strong>Missing:</strong> ${fb.missing}</div>
+    ${fb.idealAnswer ? `
+      <div style="margin-top:15px; padding:12px; background:rgba(0,184,148,0.1); border:1px solid rgba(0,184,148,0.2); border-radius:8px;">
+        <strong style="color:var(--green); display:block; margin-bottom:5px; font-size:11px; text-transform:uppercase;">Ideal Answer</strong>
+        <div style="color:var(--text2); line-height:1.6;">${fb.idealAnswer}</div>
+      </div>` : ''}
+  `;
+
+  if (fb.completedSteps && S.currentQ.steps) {
+    S.currentQ.steps.forEach((s, i) => {
+      if (fb.completedSteps.some(cs => cs.toLowerCase().includes(s.toLowerCase()))) {
+        const el = document.getElementById('fw-' + i);
+        if(el) el.className = 'fw-step done';
+      }
+    });
+  }
+}
+
+window.onload = () => {
+  document.getElementById('cnt-all').textContent = QUESTIONS.length;
+  document.getElementById('cnt-sql').textContent = QUESTIONS.filter(q => q.type === 'sql').length;
+  document.getElementById('cnt-product').textContent = QUESTIONS.filter(q => q.type === 'product').length;
+  document.getElementById('cnt-behavioral').textContent = QUESTIONS.filter(q => q.type === 'behavioral').length;
+  document.getElementById('cnt-term').textContent = QUESTIONS.filter(q => q.type === 'term').length;
+};
+</script>
+</body>
+</html>
