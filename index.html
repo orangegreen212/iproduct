@@ -1259,21 +1259,35 @@ function showFeedback(fb, answer) {
 
   const scoreRow = document.getElementById('score-row');
   const cls = v => v >= 8 ? 'val-hi' : v >= 6 ? 'val-md' : 'val-lo';
+  
   scoreRow.innerHTML = `
     <div class="score-cell"><div class="score-lbl">Structure</div><div class="score-val ${cls(fb.structure)}">${fb.structure}/10</div></div>
     <div class="score-cell"><div class="score-lbl">Business</div><div class="score-val ${cls(fb.business)}">${fb.business}/10</div></div>
     <div class="score-cell"><div class="score-lbl">Terms</div><div class="score-val ${cls(fb.terminology)}">${fb.terminology}/10</div></div>
-    <div class="score-cell"><div class="score-lbl">Closes loop</div><div class="score-val ${fb.closesLoop==='Yes'?'val-hi':'val-lo'}">${fb.closesLoop==='Yes'?'Yes':'No'}</div></div>
+    <div class="score-cell"><div class="score-lbl">Closes loop</div><div class="score-val ${fb.closesLoop==='Yes'?'val-hi':'val-lo'}">${fb.closesLoop === 'Yes' ? 'Yes' : 'No'}</div></div>
   `;
 
   const body = document.getElementById('feedback-body');
-  body.innerHTML = `
+  
+  // Создаем контент для тела фидбека
+  let bodyHTML = `
     <div class="fb-good"><strong>Good —</strong> ${fb.good}</div>
     <div class="fb-missing"><strong>Missing —</strong> ${fb.missing}</div>
-    ${fb.idealAnswer ? `<div class="fb-ideal"><strong>Ideal answer</strong>${fb.idealAnswer}</div>` : ''}
   `;
 
-  // mark steps done
+  // Добавляем блок идеального ответа, если он пришел от API
+  if (fb.idealAnswer) {
+    bodyHTML += `
+      <div class="fb-ideal">
+        <strong>Ideal Answer</strong>
+        <div style="margin-top: 5px;">${fb.idealAnswer}</div>
+      </div>
+    `;
+  }
+
+  body.innerHTML = bodyHTML;
+
+  // Подсветка выполненных шагов фреймворка
   if (fb.completedSteps && S.currentQ) {
     S.currentQ.steps.forEach((s, i) => {
       const el = document.getElementById('fw-' + i);
@@ -1283,18 +1297,17 @@ function showFeedback(fb, answer) {
     });
   }
 
-  // TTS
+  // Озвучка
   if (window.speechSynthesis && fb.good) {
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(`Score ${fb.totalScore} out of 10. ${fb.good} ${fb.missing}`);
+    const u = new SpeechSynthesisUtterance(`Score ${fb.totalScore || fb.structure} out of 10.`);
     u.lang = S.lang === 'uk' ? 'uk-UA' : 'en-US';
     u.rate = 1.1;
-    setTimeout(() => window.speechSynthesis.speak(u), 400);
+    window.speechSynthesis.speak(u);
   }
 
   wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
-
 // ── STATS ──────────────────────────────────────────────
 function saveStats(fb) {
   S.stats.done++;
