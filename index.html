@@ -460,6 +460,17 @@ html, body {
   line-height: 1.6;
 }
 .fb-phrase strong { display: block; margin-bottom: 2px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); }
+.fb-ideal {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(0,184,148,0.08);
+  border: 1px solid rgba(0,184,148,0.2);
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.75;
+}
+.fb-ideal strong { display: block; margin-bottom: 6px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--green); font-weight: 700; }
 .feedback-actions {
   display: flex;
   gap: 8px;
@@ -610,18 +621,34 @@ html, body {
 
 /* ── RESPONSIVE ─────────────────────────────────────── */
 @media (max-width: 680px) {
-  .layout { grid-template-columns: 1fr; }
+  .layout { grid-template-columns: 1fr; grid-template-rows: 1fr; }
   .sidebar { display: none; }
   .mobile-nav { display: block; }
 
-  /* push session content above bottom nav */
-  .session { padding-bottom: 80px; }
-  .controls { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+  /* main fills full height, controls sit above bottom nav */
+  .main { height: 100vh; height: 100dvh; }
+
+  /* session scrolls, leaves room for controls + bottom nav */
+  .session { padding-bottom: 16px; }
+
+  /* controls pinned above mobile-nav */
+  .controls {
+    position: fixed;
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    left: 0; right: 0;
+    z-index: 150;
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+
+  /* extra scroll padding so last feedback isn't hidden behind fixed controls */
+  .session { padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px)); }
 
   .q-text { font-size: 17px; }
-  .mic-btn { width: 52px; height: 52px; }
-  .submit-btn { height: 52px; font-size: 15px; padding: 0 16px; }
-  .answer-input { min-height: 52px; font-size: 15px; }
+  .mic-btn { width: 54px; height: 54px; }
+  .submit-btn { height: 54px; font-size: 15px; padding: 0 16px; }
+  .answer-input { min-height: 54px; font-size: 15px; }
   .score-row { grid-template-columns: repeat(2,1fr); }
   .score-cell:nth-child(2) { border-right: none; }
   .score-cell:nth-child(3) { border-top: 1px solid var(--border); }
@@ -634,6 +661,7 @@ html, body {
   /* start screen on mobile */
   .cat-grid { grid-template-columns: repeat(2,1fr); }
   .start-title { font-size: 24px; }
+  .start-screen { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 }
 </style>
 </head>
@@ -1171,7 +1199,7 @@ function showFeedback(fb, answer) {
   body.innerHTML = `
     <div class="fb-good"><strong>Good —</strong> ${fb.good}</div>
     <div class="fb-missing"><strong>Missing —</strong> ${fb.missing}</div>
-    ${fb.betterPhrase ? `<div class="fb-phrase"><strong>Stronger phrasing</strong>"${fb.betterPhrase}"</div>` : ''}
+    ${fb.idealAnswer ? `<div class="fb-ideal"><strong>Ideal answer</strong>${fb.idealAnswer}</div>` : ''}
   `;
 
   // mark steps done
