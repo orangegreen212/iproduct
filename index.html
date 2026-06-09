@@ -1269,25 +1269,19 @@ function showFeedback(fb, answer) {
 
   const body = document.getElementById('feedback-body');
   
-  // Создаем контент для тела фидбека
-  let bodyHTML = `
+  // Основной текст фидбека + блок Ideal Answer
+  body.innerHTML = `
     <div class="fb-good"><strong>Good —</strong> ${fb.good}</div>
     <div class="fb-missing"><strong>Missing —</strong> ${fb.missing}</div>
+    ${fb.idealAnswer ? `
+      <div class="fb-ideal" style="margin-top:15px; padding:12px; background:rgba(0,184,148,0.1); border:1px solid rgba(0,184,148,0.2); border-radius:8px;">
+        <strong style="color:var(--green); display:block; margin-bottom:5px; font-size:11px; text-transform:uppercase;">Ideal Answer</strong>
+        <div style="color:var(--text2); font-size:13px; line-height:1.6;">${fb.idealAnswer}</div>
+      </div>
+    ` : ''}
   `;
 
-  // Добавляем блок идеального ответа, если он пришел от API
-  if (fb.idealAnswer) {
-    bodyHTML += `
-      <div class="fb-ideal">
-        <strong>Ideal Answer</strong>
-        <div style="margin-top: 5px;">${fb.idealAnswer}</div>
-      </div>
-    `;
-  }
-
-  body.innerHTML = bodyHTML;
-
-  // Подсветка выполненных шагов фреймворка
+  // Подсветка шагов (VDSHV/STAR)
   if (fb.completedSteps && S.currentQ) {
     S.currentQ.steps.forEach((s, i) => {
       const el = document.getElementById('fw-' + i);
@@ -1296,6 +1290,9 @@ function showFeedback(fb, answer) {
       }
     });
   }
+
+  wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
   // Озвучка
   if (window.speechSynthesis && fb.good) {
